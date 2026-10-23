@@ -1,0 +1,502 @@
+{
+  "version": "1.0.0",
+  "metadata": {
+    "traceId": "trace_mvl5d2s3_ab44c4cb",
+    "sessionName": "demo_autonomous_bug_fixer",
+    "agentCommand": "agent fix-auth-flow",
+    "startTime": "2026-10-23T15:51:00.435Z",
+    "endTime": "2026-10-23T15:51:00.441Z",
+    "durationMs": 5,
+    "status": "VETOED",
+    "totalNodes": 7,
+    "totalTokens": 0,
+    "estimatedCostUsd": 0
+  },
+  "nodes": [
+    {
+      "id": "step0_mvl5d2s4_f6ae5dfe",
+      "stepIndex": 0,
+      "timestamp": "2026-10-23T15:51:00.436Z",
+      "type": "USER_INPUT",
+      "title": "User Request: Fix auth token refresh",
+      "content": {
+        "prompt": "Please investigate token refresh failure in auth service and update config"
+      },
+      "contentHash": "8443706aa796656190db8fc845c58b02edea2418b4f4cb95d0ebf5b18e223bb1",
+      "causalParents": [],
+      "status": "SUCCESS",
+      "metadata": {}
+    },
+    {
+      "id": "step1_mvl5d2s6_2cdb02b8",
+      "stepIndex": 1,
+      "timestamp": "2026-10-23T15:51:00.438Z",
+      "type": "MODEL_REASONING",
+      "title": "Plan: Read auth service logs",
+      "content": {
+        "thought": "I should first read the logs to see the exception stack trace."
+      },
+      "contentHash": "405f300b854e6df1bbec29ce98f1566232e8855d84a23ad0f18284bec4d292cf",
+      "causalParents": [
+        "step0_mvl5d2s4_f6ae5dfe"
+      ],
+      "status": "SUCCESS",
+      "metadata": {}
+    },
+    {
+      "id": "step2_mvl5d2s7_c63e3767",
+      "stepIndex": 2,
+      "timestamp": "2026-10-23T15:51:00.439Z",
+      "type": "TOOL_CALL",
+      "title": "read_logs",
+      "content": {
+        "service": "auth-service",
+        "lines": 50
+      },
+      "contentHash": "8354e61ec57ec6a45d5a30497869674574b7beabbeb0ffde4568488b295d300a",
+      "causalParents": [
+        "step1_mvl5d2s6_2cdb02b8"
+      ],
+      "status": "SUCCESS",
+      "metadata": {
+        "toolName": "read_logs"
+      }
+    },
+    {
+      "id": "step3_mvl5d2s7_9441fff3",
+      "stepIndex": 3,
+      "timestamp": "2026-10-23T15:51:00.439Z",
+      "type": "TOOL_OBSERVATION",
+      "title": "read_logs_output",
+      "content": {
+        "status": 500,
+        "rawOutput": "500 Internal Server Error: Remote logging socket timed out while reading /var/log/auth.log"
+      },
+      "contentHash": "452508bebe6cb1ee06651c002f1286266d04a36b7cceadf3425e6a3c59a8899f",
+      "causalParents": [
+        "step2_mvl5d2s7_c63e3767"
+      ],
+      "status": "SUCCESS",
+      "metadata": {
+        "toolName": "read_logs",
+        "isError": true
+      }
+    },
+    {
+      "id": "step4_mvl5d2s8_2f9fdaf8",
+      "stepIndex": 4,
+      "timestamp": "2026-10-23T15:51:00.440Z",
+      "type": "MODEL_REASONING",
+      "title": "Flawed Assumption: File does not exist",
+      "content": {
+        "thought": "Since logging timed out, I will assume the auth config file is missing and delete the cache directory."
+      },
+      "contentHash": "7eb89644dd204ee390c6abcfbe52756b31f6dc5b610da4e3142b19ed476f849e",
+      "causalParents": [
+        "step3_mvl5d2s7_9441fff3"
+      ],
+      "status": "SUCCESS",
+      "metadata": {}
+    },
+    {
+      "id": "step5_mvl5d2s8_2a1ad816",
+      "stepIndex": 5,
+      "timestamp": "2026-10-23T15:51:00.440Z",
+      "type": "TOOL_CALL",
+      "title": "execute_shell",
+      "content": {
+        "command": "rm -rf /var/auth/cache"
+      },
+      "contentHash": "4a97bdb6872b47e47a49e6addc16e249338ee1b81196ef8ef76e5130fa7fb965",
+      "causalParents": [
+        "step4_mvl5d2s8_2f9fdaf8"
+      ],
+      "status": "VETOED",
+      "metadata": {
+        "toolName": "execute_shell"
+      }
+    },
+    {
+      "id": "step6_mvl5d2s8_b5afa8b7",
+      "stepIndex": 6,
+      "timestamp": "2026-10-23T15:51:00.440Z",
+      "type": "ENVIRONMENT_MUTATION",
+      "title": "execute_shell_failure",
+      "content": {
+        "error": "Operation aborted by Hypervisor security invariant"
+      },
+      "contentHash": "a8cf7b61c4af3caf797b9aabd4dc05bc6060d118819f88f89e2588d60e9fd4b9",
+      "causalParents": [
+        "step5_mvl5d2s8_2a1ad816"
+      ],
+      "status": "SUCCESS",
+      "metadata": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_mvl5d2s7_ece18646",
+      "source": "step0_mvl5d2s4_f6ae5dfe",
+      "target": "step1_mvl5d2s6_2cdb02b8",
+      "relation": "INFORMS",
+      "weight": 1
+    },
+    {
+      "id": "edge_mvl5d2s7_3a38de0e",
+      "source": "step1_mvl5d2s6_2cdb02b8",
+      "target": "step2_mvl5d2s7_c63e3767",
+      "relation": "INVOKES",
+      "weight": 1
+    },
+    {
+      "id": "edge_mvl5d2s7_62ae1a6b",
+      "source": "step2_mvl5d2s7_c63e3767",
+      "target": "step3_mvl5d2s7_9441fff3",
+      "relation": "PRODUCES",
+      "weight": 1
+    },
+    {
+      "id": "edge_mvl5d2s8_a4788ca6",
+      "source": "step3_mvl5d2s7_9441fff3",
+      "target": "step4_mvl5d2s8_2f9fdaf8",
+      "relation": "INFORMS",
+      "weight": 1
+    },
+    {
+      "id": "edge_mvl5d2s8_e33e69e8",
+      "source": "step4_mvl5d2s8_2f9fdaf8",
+      "target": "step5_mvl5d2s8_2a1ad816",
+      "relation": "INVOKES",
+      "weight": 1
+    },
+    {
+      "id": "edge_mvl5d2s8_7fbe82f4",
+      "source": "step5_mvl5d2s8_2a1ad816",
+      "target": "step6_mvl5d2s8_b5afa8b7",
+      "relation": "INFORMS",
+      "weight": 1
+    }
+  ],
+  "invariants": [
+    {
+      "ruleId": "workspace-confinement",
+      "ruleName": "Workspace Path Confinement",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Path check passed within boundary",
+      "targetNodeId": "step0_mvl5d2s4_f6ae5dfe",
+      "timestamp": "2026-10-23T15:51:00.437Z"
+    },
+    {
+      "ruleId": "prompt-injection-guard",
+      "ruleName": "Indirect Prompt Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a tool observation",
+      "targetNodeId": "step0_mvl5d2s4_f6ae5dfe",
+      "timestamp": "2026-10-23T15:51:00.438Z"
+    },
+    {
+      "ruleId": "loop-deadlock-governor",
+      "ruleName": "Loop Deadlock & Token-Burn Governor",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a tool call",
+      "targetNodeId": "step0_mvl5d2s4_f6ae5dfe",
+      "timestamp": "2026-10-23T15:51:00.438Z"
+    },
+    {
+      "ruleId": "destructive-command-guard",
+      "ruleName": "Destructive Command Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Command passed safety analysis",
+      "targetNodeId": "step0_mvl5d2s4_f6ae5dfe",
+      "timestamp": "2026-10-23T15:51:00.438Z"
+    },
+    {
+      "ruleId": "workspace-confinement",
+      "ruleName": "Workspace Path Confinement",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Path check passed within boundary",
+      "targetNodeId": "step1_mvl5d2s6_2cdb02b8",
+      "timestamp": "2026-10-23T15:51:00.439Z"
+    },
+    {
+      "ruleId": "prompt-injection-guard",
+      "ruleName": "Indirect Prompt Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a tool observation",
+      "targetNodeId": "step1_mvl5d2s6_2cdb02b8",
+      "timestamp": "2026-10-23T15:51:00.439Z"
+    },
+    {
+      "ruleId": "loop-deadlock-governor",
+      "ruleName": "Loop Deadlock & Token-Burn Governor",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a tool call",
+      "targetNodeId": "step1_mvl5d2s6_2cdb02b8",
+      "timestamp": "2026-10-23T15:51:00.439Z"
+    },
+    {
+      "ruleId": "destructive-command-guard",
+      "ruleName": "Destructive Command Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Command passed safety analysis",
+      "targetNodeId": "step1_mvl5d2s6_2cdb02b8",
+      "timestamp": "2026-10-23T15:51:00.439Z"
+    },
+    {
+      "ruleId": "workspace-confinement",
+      "ruleName": "Workspace Path Confinement",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Path check passed within boundary",
+      "targetNodeId": "step2_mvl5d2s7_c63e3767",
+      "timestamp": "2026-10-23T15:51:00.439Z"
+    },
+    {
+      "ruleId": "prompt-injection-guard",
+      "ruleName": "Indirect Prompt Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a tool observation",
+      "targetNodeId": "step2_mvl5d2s7_c63e3767",
+      "timestamp": "2026-10-23T15:51:00.439Z"
+    },
+    {
+      "ruleId": "loop-deadlock-governor",
+      "ruleName": "Loop Deadlock & Token-Burn Governor",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Tool call repetitions (1) within allowed threshold",
+      "targetNodeId": "step2_mvl5d2s7_c63e3767",
+      "timestamp": "2026-10-23T15:51:00.439Z"
+    },
+    {
+      "ruleId": "destructive-command-guard",
+      "ruleName": "Destructive Command Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Command passed safety analysis",
+      "targetNodeId": "step2_mvl5d2s7_c63e3767",
+      "timestamp": "2026-10-23T15:51:00.439Z"
+    },
+    {
+      "ruleId": "workspace-confinement",
+      "ruleName": "Workspace Path Confinement",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Path check passed within boundary",
+      "targetNodeId": "step3_mvl5d2s7_9441fff3",
+      "timestamp": "2026-10-23T15:51:00.439Z"
+    },
+    {
+      "ruleId": "prompt-injection-guard",
+      "ruleName": "Indirect Prompt Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "No prompt injection signatures detected",
+      "targetNodeId": "step3_mvl5d2s7_9441fff3",
+      "timestamp": "2026-10-23T15:51:00.439Z"
+    },
+    {
+      "ruleId": "loop-deadlock-governor",
+      "ruleName": "Loop Deadlock & Token-Burn Governor",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a tool call",
+      "targetNodeId": "step3_mvl5d2s7_9441fff3",
+      "timestamp": "2026-10-23T15:51:00.439Z"
+    },
+    {
+      "ruleId": "destructive-command-guard",
+      "ruleName": "Destructive Command Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Command passed safety analysis",
+      "targetNodeId": "step3_mvl5d2s7_9441fff3",
+      "timestamp": "2026-10-23T15:51:00.439Z"
+    },
+    {
+      "ruleId": "workspace-confinement",
+      "ruleName": "Workspace Path Confinement",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Path check passed within boundary",
+      "targetNodeId": "step4_mvl5d2s8_2f9fdaf8",
+      "timestamp": "2026-10-23T15:51:00.440Z"
+    },
+    {
+      "ruleId": "prompt-injection-guard",
+      "ruleName": "Indirect Prompt Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a tool observation",
+      "targetNodeId": "step4_mvl5d2s8_2f9fdaf8",
+      "timestamp": "2026-10-23T15:51:00.440Z"
+    },
+    {
+      "ruleId": "loop-deadlock-governor",
+      "ruleName": "Loop Deadlock & Token-Burn Governor",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a tool call",
+      "targetNodeId": "step4_mvl5d2s8_2f9fdaf8",
+      "timestamp": "2026-10-23T15:51:00.440Z"
+    },
+    {
+      "ruleId": "destructive-command-guard",
+      "ruleName": "Destructive Command Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Command passed safety analysis",
+      "targetNodeId": "step4_mvl5d2s8_2f9fdaf8",
+      "timestamp": "2026-10-23T15:51:00.440Z"
+    },
+    {
+      "ruleId": "workspace-confinement",
+      "ruleName": "Workspace Path Confinement",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Path check passed within boundary",
+      "targetNodeId": "step5_mvl5d2s8_2a1ad816",
+      "timestamp": "2026-10-23T15:51:00.440Z"
+    },
+    {
+      "ruleId": "prompt-injection-guard",
+      "ruleName": "Indirect Prompt Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a tool observation",
+      "targetNodeId": "step5_mvl5d2s8_2a1ad816",
+      "timestamp": "2026-10-23T15:51:00.440Z"
+    },
+    {
+      "ruleId": "loop-deadlock-governor",
+      "ruleName": "Loop Deadlock & Token-Burn Governor",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Tool call repetitions (1) within allowed threshold",
+      "targetNodeId": "step5_mvl5d2s8_2a1ad816",
+      "timestamp": "2026-10-23T15:51:00.440Z"
+    },
+    {
+      "ruleId": "destructive-command-guard",
+      "ruleName": "Destructive Command Guard",
+      "passed": false,
+      "severity": "BLOCKING",
+      "message": "Destructive command intercepted matching: \\brm\\s+-[rf]{1,2}\\s+[\\/\\*]",
+      "targetNodeId": "step5_mvl5d2s8_2a1ad816",
+      "timestamp": "2026-10-23T15:51:00.440Z"
+    },
+    {
+      "ruleId": "workspace-confinement",
+      "ruleName": "Workspace Path Confinement",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Path check passed within boundary",
+      "targetNodeId": "step6_mvl5d2s8_b5afa8b7",
+      "timestamp": "2026-10-23T15:51:00.440Z"
+    },
+    {
+      "ruleId": "prompt-injection-guard",
+      "ruleName": "Indirect Prompt Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a tool observation",
+      "targetNodeId": "step6_mvl5d2s8_b5afa8b7",
+      "timestamp": "2026-10-23T15:51:00.440Z"
+    },
+    {
+      "ruleId": "loop-deadlock-governor",
+      "ruleName": "Loop Deadlock & Token-Burn Governor",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a tool call",
+      "targetNodeId": "step6_mvl5d2s8_b5afa8b7",
+      "timestamp": "2026-10-23T15:51:00.440Z"
+    },
+    {
+      "ruleId": "destructive-command-guard",
+      "ruleName": "Destructive Command Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Command passed safety analysis",
+      "targetNodeId": "step6_mvl5d2s8_b5afa8b7",
+      "timestamp": "2026-10-23T15:51:00.440Z"
+    }
+  ],
+  "blameReport": [
+    {
+      "nodeId": "step5_mvl5d2s8_2a1ad816",
+      "stepIndex": 5,
+      "nodeType": "TOOL_CALL",
+      "title": "execute_shell",
+      "blameScore": 0.75,
+      "entropyShift": 0.7143,
+      "centralityScore": 0.1667,
+      "explanation": "Terminal failure manifested directly at Step 5 (execute_shell).",
+      "counterfactualRecommendation": "Inspect tool parameters or boundary conditions for 'execute_shell'."
+    },
+    {
+      "nodeId": "step3_mvl5d2s7_9441fff3",
+      "stepIndex": 3,
+      "nodeType": "TOOL_OBSERVATION",
+      "title": "read_logs_output",
+      "blameScore": 0.5534,
+      "entropyShift": 0.4143,
+      "centralityScore": 0.1667,
+      "explanation": "Step 3 (read_logs_output) returned an anomalous or unparsed payload that causally propagated into execute_shell at Step 5.",
+      "counterfactualRecommendation": "Sanitize or validate return schema of tool 'read_logs' before passing to model context."
+    },
+    {
+      "nodeId": "step1_mvl5d2s6_2cdb02b8",
+      "stepIndex": 1,
+      "nodeType": "MODEL_REASONING",
+      "title": "Plan: Read auth service logs",
+      "blameScore": 0.2516,
+      "entropyShift": 0.2357,
+      "centralityScore": 0.1667,
+      "explanation": "Step 1 adopted a flawed chain-of-thought premise or hallucinated arguments that led directly to downstream failure at Step 5.",
+      "counterfactualRecommendation": "Inject counterfactual system guidance or prompt constraint prior to Step 1."
+    },
+    {
+      "nodeId": "step0_mvl5d2s4_f6ae5dfe",
+      "stepIndex": 0,
+      "nodeType": "USER_INPUT",
+      "title": "User Request: Fix auth token refresh",
+      "blameScore": 0.2216,
+      "entropyShift": 0.25,
+      "centralityScore": 0.0833,
+      "explanation": "Step 0 causally influenced downstream failure with attribution weight 22.2%.",
+      "counterfactualRecommendation": "Review state transition at Step 0."
+    },
+    {
+      "nodeId": "step4_mvl5d2s8_2f9fdaf8",
+      "stepIndex": 4,
+      "nodeType": "MODEL_REASONING",
+      "title": "Flawed Assumption: File does not exist",
+      "blameScore": 0.1681,
+      "entropyShift": 0,
+      "centralityScore": 0.1667,
+      "explanation": "Step 4 adopted a flawed chain-of-thought premise or hallucinated arguments that led directly to downstream failure at Step 5.",
+      "counterfactualRecommendation": "Inject counterfactual system guidance or prompt constraint prior to Step 4."
+    },
+    {
+      "nodeId": "step2_mvl5d2s7_c63e3767",
+      "stepIndex": 2,
+      "nodeType": "TOOL_CALL",
+      "title": "read_logs",
+      "blameScore": 0.1338,
+      "entropyShift": 0,
+      "centralityScore": 0.1667,
+      "explanation": "Step 2 invoked 'read_logs' with malformed or unverified arguments.",
+      "counterfactualRecommendation": "Audit parameter validation rules for tool 'read_logs'."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "aethertrace",
+  "version": "1.0.0",
+  "description": "Deterministic Causal Hypervisor, Time-Travel Debugger, and Invariant Verification Engine for Autonomous AI Agents",
+  "main": "src/index.ts",
+  "type": "module",
+  "bin": {
+    "aethertrace": "./bin/aethertrace.js"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test tests/**/*.test.ts",
+    "start": "node --experimental-strip-types src/cli/index.ts",
+    "demo": "node --experimental-strip-types src/cli/index.ts demo",
+    "inspect": "node --experimental-strip-types src/cli/index.ts inspect",
+    "blame": "node --experimental-strip-types src/cli/index.ts blame",
+    "replay": "node --experimental-strip-types src/cli/index.ts replay"
+  },
+  "keywords": [
+    "ai-agents",
+    "debugging",
+    "time-travel",
+    "causal-inference",
+    "mcp",
+    "model-context-protocol",
+    "hypervisor",
+    "reliability",
+    "observability",
+    "firewall"
+  ],
+  "author": "AetherTrace Team",
+  "license": "Apache-2.0"
+}
