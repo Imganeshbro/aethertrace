@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c16" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#050811" />
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#818cf8" />
+      <stop offset="100%" stop-color="#c084fc" />
+    </linearGradient>
+    <linearGradient id="glowLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#818cf8" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#c084fc" stop-opacity="0" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="360" rx="16" fill="url(#bgGrad)" />
+  <rect width="1198" height="358" x="1" y="1" rx="15" fill="none" stroke="#1e293b" stroke-width="1.5" />
+
+  <!-- Grid Pattern -->
+  <g opacity="0.15">
+    <path d="M0 60 H1200 M0 120 H1200 M0 180 H1200 M0 240 H1200 M0 300 H1200" stroke="#38bdf8" stroke-width="0.5" />
+    <path d="M120 0 V360 M240 0 V360 M360 0 V360 M480 0 V360 M600 0 V360 M720 0 V360 M840 0 V360 M960 0 V360 M1080 0 V360" stroke="#38bdf8" stroke-width="0.5" />
+  </g>
+
+  <!-- Causal Graph Network Decoration on Right -->
+  <g opacity="0.85" transform="translate(760, 50)">
+    <!-- Connections -->
+    <path d="M40 130 L130 60 L230 110 L330 70" stroke="url(#glowLine)" stroke-width="2.5" fill="none" />
+    <path d="M130 60 L140 190 L240 210 L330 70" stroke="#818cf8" stroke-width="2" stroke-dasharray="4 4" fill="none" opacity="0.6" />
+    <path d="M40 130 L140 190 L230 110" stroke="#38bdf8" stroke-width="1.5" fill="none" opacity="0.4" />
+    <path d="M230 110 L340 180" stroke="#f43f5e" stroke-width="2" stroke-dasharray="3 3" fill="none" />
+
+    <!-- Nodes -->
+    <circle cx="40" cy="130" r="14" fill="#0f172a" stroke="#38bdf8" stroke-width="3" filter="url(#glow)" />
+    <circle cx="40" cy="130" r="5" fill="#38bdf8" />
+    
+    <circle cx="130" cy="60" r="16" fill="#0f172a" stroke="#818cf8" stroke-width="3" filter="url(#glow)" />
+    <circle cx="130" cy="60" r="6" fill="#818cf8" />
+
+    <circle cx="140" cy="190" r="14" fill="#0f172a" stroke="#06b6d4" stroke-width="2.5" />
+    <circle cx="140" cy="190" r="5" fill="#06b6d4" />
+
+    <circle cx="230" cy="110" r="18" fill="#0f172a" stroke="#c084fc" stroke-width="3.5" filter="url(#glow)" />
+    <circle cx="230" cy="110" r="7" fill="#c084fc" />
+
+    <circle cx="240" cy="210" r="12" fill="#0f172a" stroke="#10b981" stroke-width="2" />
+    <circle cx="240" cy="210" r="4" fill="#10b981" />
+
+    <circle cx="330" cy="70" r="15" fill="#0f172a" stroke="#38bdf8" stroke-width="3" filter="url(#glow)" />
+    <circle cx="330" cy="70" r="5" fill="#38bdf8" />
+
+    <circle cx="340" cy="180" r="16" fill="#0f172a" stroke="#f43f5e" stroke-width="3" filter="url(#glow)" />
+    <circle cx="340" cy="180" r="6" fill="#f43f5e" />
+
+    <!-- Node labels -->
+    <text x="40" y="165" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto" font-size="11" fill="#94a3b8" text-anchor="middle">Step 0</text>
+    <text x="130" y="35" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto" font-size="11" fill="#94a3b8" text-anchor="middle">Reasoning</text>
+    <text x="230" y="80" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto" font-size="11" fill="#c084fc" text-anchor="middle">Tool Call</text>
+    <text x="340" y="215" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto" font-size="11" fill="#f43f5e" font-weight="bold" text-anchor="middle">VETOED</text>
+  </g>
+
+  <!-- Left Content Branding -->
+  <g transform="translate(70, 75)">
+    <!-- Badge -->
+    <rect width="210" height="28" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <circle cx="16" cy="14" r="4" fill="#10b981" />
+    <text x="28" y="19" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto" font-size="11" font-weight="600" fill="#cbd5e1" letter-spacing="0.08em">AGENT HYPERVISOR v1.0</text>
+
+    <!-- Main Title -->
+    <text x="0" y="85" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="54" font-weight="900" fill="url(#titleGrad)" letter-spacing="-0.02em">
+      AetherTrace
+    </text>
+
+    <!-- Subtitle / Tagline -->
+    <text x="0" y="125" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="20" font-weight="600" fill="#f1f5f9">
+      Deterministic Causal Hypervisor &amp; Time-Travel Debugger
+    </text>
+    <text x="0" y="152" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="15" fill="#94a3b8">
+      Zero-Token Replay • Causal Blame Localization • Active Invariant Firewall • MCP Native
+    </text>
+
+    <!-- Tech Pills -->
+    <g transform="translate(0, 185)">
+      <rect x="0" width="130" height="32" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1" opacity="0.9" />
+      <text x="65" y="21" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto" font-size="12" font-weight="600" fill="#38bdf8" text-anchor="middle">Causal DAG</text>
+
+      <rect x="142" width="145" height="32" rx="8" fill="#1e293b" stroke="#818cf8" stroke-width="1" opacity="0.9" />
+      <text x="214" y="21" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto" font-size="12" font-weight="600" fill="#818cf8" text-anchor="middle">Zero-Token Replay</text>
+
+      <rect x="299" width="145" height="32" rx="8" fill="#1e293b" stroke="#c084fc" stroke-width="1" opacity="0.9" />
+      <text x="371" y="21" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto" font-size="12" font-weight="600" fill="#c084fc" text-anchor="middle">eBPF-Style Guard</text>
+
+      <rect x="456" width="125" height="32" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1" opacity="0.9" />
+      <text x="518" y="21" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto" font-size="12" font-weight="600" fill="#10b981" text-anchor="middle">Auto-CI Synth</text>
+    </g>
+  </g>
+</svg>
