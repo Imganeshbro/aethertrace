@@ -1,12 +1,12 @@
 {
   "version": "1.0.0",
   "metadata": {
-    "traceId": "trace_mvl5d2s3_ab44c4cb",
+    "traceId": "trace_mvm3msyl_f5a0c48e",
     "sessionName": "demo_autonomous_bug_fixer",
     "agentCommand": "agent fix-auth-flow",
-    "startTime": "2026-10-23T15:51:00.435Z",
-    "endTime": "2026-10-23T15:51:00.441Z",
-    "durationMs": 5,
+    "startTime": "2026-10-24T07:50:21.213Z",
+    "endTime": "2026-10-24T07:50:21.220Z",
+    "durationMs": 6,
     "status": "VETOED",
     "totalNodes": 7,
     "totalTokens": 0,
@@ -14,9 +14,9 @@
   },
   "nodes": [
     {
-      "id": "step0_mvl5d2s4_f6ae5dfe",
+      "id": "step0_mvm3msym_933a4140",
       "stepIndex": 0,
-      "timestamp": "2026-10-23T15:51:00.436Z",
+      "timestamp": "2026-10-24T07:50:21.214Z",
       "type": "USER_INPUT",
       "title": "User Request: Fix auth token refresh",
       "content": {
@@ -28,9 +28,9 @@
       "metadata": {}
     },
     {
-      "id": "step1_mvl5d2s6_2cdb02b8",
+      "id": "step1_mvm3msyo_65f8b0ff",
       "stepIndex": 1,
-      "timestamp": "2026-10-23T15:51:00.438Z",
+      "timestamp": "2026-10-24T07:50:21.216Z",
       "type": "MODEL_REASONING",
       "title": "Plan: Read auth service logs",
       "content": {
@@ -38,15 +38,15 @@
       },
       "contentHash": "405f300b854e6df1bbec29ce98f1566232e8855d84a23ad0f18284bec4d292cf",
       "causalParents": [
-        "step0_mvl5d2s4_f6ae5dfe"
+        "step0_mvm3msym_933a4140"
       ],
       "status": "SUCCESS",
       "metadata": {}
     },
     {
-      "id": "step2_mvl5d2s7_c63e3767",
+      "id": "step2_mvm3msyq_f37d89af",
       "stepIndex": 2,
-      "timestamp": "2026-10-23T15:51:00.439Z",
+      "timestamp": "2026-10-24T07:50:21.218Z",
       "type": "TOOL_CALL",
       "title": "read_logs",
       "content": {
@@ -55,7 +55,7 @@
       },
       "contentHash": "8354e61ec57ec6a45d5a30497869674574b7beabbeb0ffde4568488b295d300a",
       "causalParents": [
-        "step1_mvl5d2s6_2cdb02b8"
+        "step1_mvm3msyo_65f8b0ff"
       ],
       "status": "SUCCESS",
       "metadata": {
@@ -63,9 +63,9 @@
       }
     },
     {
-      "id": "step3_mvl5d2s7_9441fff3",
+      "id": "step3_mvm3msyq_b6da73dc",
       "stepIndex": 3,
-      "timestamp": "2026-10-23T15:51:00.439Z",
+      "timestamp": "2026-10-24T07:50:21.218Z",
       "type": "TOOL_OBSERVATION",
       "title": "read_logs_output",
       "content": {
@@ -74,7 +74,7 @@
       },
       "contentHash": "452508bebe6cb1ee06651c002f1286266d04a36b7cceadf3425e6a3c59a8899f",
       "causalParents": [
-        "step2_mvl5d2s7_c63e3767"
+        "step2_mvm3msyq_f37d89af"
       ],
       "status": "SUCCESS",
       "metadata": {
@@ -83,9 +83,9 @@
       }
     },
     {
-      "id": "step4_mvl5d2s8_2f9fdaf8",
+      "id": "step4_mvm3msyq_8974d2ba",
       "stepIndex": 4,
-      "timestamp": "2026-10-23T15:51:00.440Z",
+      "timestamp": "2026-10-24T07:50:21.218Z",
       "type": "MODEL_REASONING",
       "title": "Flawed Assumption: File does not exist",
       "content": {
@@ -93,15 +93,15 @@
       },
       "contentHash": "7eb89644dd204ee390c6abcfbe52756b31f6dc5b610da4e3142b19ed476f849e",
       "causalParents": [
-        "step3_mvl5d2s7_9441fff3"
+        "step3_mvm3msyq_b6da73dc"
       ],
       "status": "SUCCESS",
       "metadata": {}
     },
     {
-      "id": "step5_mvl5d2s8_2a1ad816",
+      "id": "step5_mvm3msyq_83ab26db",
       "stepIndex": 5,
-      "timestamp": "2026-10-23T15:51:00.440Z",
+      "timestamp": "2026-10-24T07:50:21.218Z",
       "type": "TOOL_CALL",
       "title": "execute_shell",
       "content": {
@@ -109,7 +109,7 @@
       },
       "contentHash": "4a97bdb6872b47e47a49e6addc16e249338ee1b81196ef8ef76e5130fa7fb965",
       "causalParents": [
-        "step4_mvl5d2s8_2f9fdaf8"
+        "step4_mvm3msyq_8974d2ba"
       ],
       "status": "VETOED",
       "metadata": {
@@ -117,9 +117,9 @@
       }
     },
     {
-      "id": "step6_mvl5d2s8_b5afa8b7",
+      "id": "step6_mvm3msyr_e69390c9",
       "stepIndex": 6,
-      "timestamp": "2026-10-23T15:51:00.440Z",
+      "timestamp": "2026-10-24T07:50:21.219Z",
       "type": "ENVIRONMENT_MUTATION",
       "title": "execute_shell_failure",
       "content": {
@@ -127,52 +127,52 @@
       },
       "contentHash": "a8cf7b61c4af3caf797b9aabd4dc05bc6060d118819f88f89e2588d60e9fd4b9",
       "causalParents": [
-        "step5_mvl5d2s8_2a1ad816"
+        "step5_mvm3msyq_83ab26db"
       ],
-      "status": "SUCCESS",
+      "status": "ERROR",
       "metadata": {}
     }
   ],
   "edges": [
     {
-      "id": "edge_mvl5d2s7_ece18646",
-      "source": "step0_mvl5d2s4_f6ae5dfe",
-      "target": "step1_mvl5d2s6_2cdb02b8",
+      "id": "edge_mvm3msyp_91214b9a",
+      "source": "step0_mvm3msym_933a4140",
+      "target": "step1_mvm3msyo_65f8b0ff",
       "relation": "INFORMS",
       "weight": 1
     },
     {
-      "id": "edge_mvl5d2s7_3a38de0e",
-      "source": "step1_mvl5d2s6_2cdb02b8",
-      "target": "step2_mvl5d2s7_c63e3767",
+      "id": "edge_mvm3msyq_d1e5a7ff",
+      "source": "step1_mvm3msyo_65f8b0ff",
+      "target": "step2_mvm3msyq_f37d89af",
       "relation": "INVOKES",
       "weight": 1
     },
     {
-      "id": "edge_mvl5d2s7_62ae1a6b",
-      "source": "step2_mvl5d2s7_c63e3767",
-      "target": "step3_mvl5d2s7_9441fff3",
+      "id": "edge_mvm3msyq_1c488976",
+      "source": "step2_mvm3msyq_f37d89af",
+      "target": "step3_mvm3msyq_b6da73dc",
       "relation": "PRODUCES",
       "weight": 1
     },
     {
-      "id": "edge_mvl5d2s8_a4788ca6",
-      "source": "step3_mvl5d2s7_9441fff3",
-      "target": "step4_mvl5d2s8_2f9fdaf8",
+      "id": "edge_mvm3msyq_de3dc564",
+      "source": "step3_mvm3msyq_b6da73dc",
+      "target": "step4_mvm3msyq_8974d2ba",
       "relation": "INFORMS",
       "weight": 1
     },
     {
-      "id": "edge_mvl5d2s8_e33e69e8",
-      "source": "step4_mvl5d2s8_2f9fdaf8",
-      "target": "step5_mvl5d2s8_2a1ad816",
+      "id": "edge_mvm3msyq_89ba0986",
+      "source": "step4_mvm3msyq_8974d2ba",
+      "target": "step5_mvm3msyq_83ab26db",
       "relation": "INVOKES",
       "weight": 1
     },
     {
-      "id": "edge_mvl5d2s8_7fbe82f4",
-      "source": "step5_mvl5d2s8_2a1ad816",
-      "target": "step6_mvl5d2s8_b5afa8b7",
+      "id": "edge_mvm3msyr_ceb44c54",
+      "source": "step5_mvm3msyq_83ab26db",
+      "target": "step6_mvm3msyr_e69390c9",
       "relation": "INFORMS",
       "weight": 1
     }
@@ -184,8 +184,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Path check passed within boundary",
-      "targetNodeId": "step0_mvl5d2s4_f6ae5dfe",
-      "timestamp": "2026-10-23T15:51:00.437Z"
+      "targetNodeId": "step0_mvm3msym_933a4140",
+      "timestamp": "2026-10-24T07:50:21.215Z"
     },
     {
       "ruleId": "prompt-injection-guard",
@@ -193,8 +193,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Not a tool observation",
-      "targetNodeId": "step0_mvl5d2s4_f6ae5dfe",
-      "timestamp": "2026-10-23T15:51:00.438Z"
+      "targetNodeId": "step0_mvm3msym_933a4140",
+      "timestamp": "2026-10-24T07:50:21.216Z"
     },
     {
       "ruleId": "loop-deadlock-governor",
@@ -202,8 +202,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Not a tool call",
-      "targetNodeId": "step0_mvl5d2s4_f6ae5dfe",
-      "timestamp": "2026-10-23T15:51:00.438Z"
+      "targetNodeId": "step0_mvm3msym_933a4140",
+      "timestamp": "2026-10-24T07:50:21.216Z"
     },
     {
       "ruleId": "destructive-command-guard",
@@ -211,8 +211,26 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Command passed safety analysis",
-      "targetNodeId": "step0_mvl5d2s4_f6ae5dfe",
-      "timestamp": "2026-10-23T15:51:00.438Z"
+      "targetNodeId": "step0_mvm3msym_933a4140",
+      "timestamp": "2026-10-24T07:50:21.216Z"
+    },
+    {
+      "ruleId": "secret-leak-guard",
+      "ruleName": "Secret & Credential Leak Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "No credential leakage detected",
+      "targetNodeId": "step0_mvm3msym_933a4140",
+      "timestamp": "2026-10-24T07:50:21.216Z"
+    },
+    {
+      "ruleId": "sql-injection-guard",
+      "ruleName": "SQL Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a data mutation or tool call",
+      "targetNodeId": "step0_mvm3msym_933a4140",
+      "timestamp": "2026-10-24T07:50:21.216Z"
     },
     {
       "ruleId": "workspace-confinement",
@@ -220,8 +238,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Path check passed within boundary",
-      "targetNodeId": "step1_mvl5d2s6_2cdb02b8",
-      "timestamp": "2026-10-23T15:51:00.439Z"
+      "targetNodeId": "step1_mvm3msyo_65f8b0ff",
+      "timestamp": "2026-10-24T07:50:21.216Z"
     },
     {
       "ruleId": "prompt-injection-guard",
@@ -229,8 +247,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Not a tool observation",
-      "targetNodeId": "step1_mvl5d2s6_2cdb02b8",
-      "timestamp": "2026-10-23T15:51:00.439Z"
+      "targetNodeId": "step1_mvm3msyo_65f8b0ff",
+      "timestamp": "2026-10-24T07:50:21.216Z"
     },
     {
       "ruleId": "loop-deadlock-governor",
@@ -238,8 +256,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Not a tool call",
-      "targetNodeId": "step1_mvl5d2s6_2cdb02b8",
-      "timestamp": "2026-10-23T15:51:00.439Z"
+      "targetNodeId": "step1_mvm3msyo_65f8b0ff",
+      "timestamp": "2026-10-24T07:50:21.216Z"
     },
     {
       "ruleId": "destructive-command-guard",
@@ -247,8 +265,26 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Command passed safety analysis",
-      "targetNodeId": "step1_mvl5d2s6_2cdb02b8",
-      "timestamp": "2026-10-23T15:51:00.439Z"
+      "targetNodeId": "step1_mvm3msyo_65f8b0ff",
+      "timestamp": "2026-10-24T07:50:21.216Z"
+    },
+    {
+      "ruleId": "secret-leak-guard",
+      "ruleName": "Secret & Credential Leak Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "No credential leakage detected",
+      "targetNodeId": "step1_mvm3msyo_65f8b0ff",
+      "timestamp": "2026-10-24T07:50:21.217Z"
+    },
+    {
+      "ruleId": "sql-injection-guard",
+      "ruleName": "SQL Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a data mutation or tool call",
+      "targetNodeId": "step1_mvm3msyo_65f8b0ff",
+      "timestamp": "2026-10-24T07:50:21.217Z"
     },
     {
       "ruleId": "workspace-confinement",
@@ -256,8 +292,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Path check passed within boundary",
-      "targetNodeId": "step2_mvl5d2s7_c63e3767",
-      "timestamp": "2026-10-23T15:51:00.439Z"
+      "targetNodeId": "step2_mvm3msyq_f37d89af",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "prompt-injection-guard",
@@ -265,8 +301,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Not a tool observation",
-      "targetNodeId": "step2_mvl5d2s7_c63e3767",
-      "timestamp": "2026-10-23T15:51:00.439Z"
+      "targetNodeId": "step2_mvm3msyq_f37d89af",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "loop-deadlock-governor",
@@ -274,8 +310,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Tool call repetitions (1) within allowed threshold",
-      "targetNodeId": "step2_mvl5d2s7_c63e3767",
-      "timestamp": "2026-10-23T15:51:00.439Z"
+      "targetNodeId": "step2_mvm3msyq_f37d89af",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "destructive-command-guard",
@@ -283,8 +319,26 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Command passed safety analysis",
-      "targetNodeId": "step2_mvl5d2s7_c63e3767",
-      "timestamp": "2026-10-23T15:51:00.439Z"
+      "targetNodeId": "step2_mvm3msyq_f37d89af",
+      "timestamp": "2026-10-24T07:50:21.218Z"
+    },
+    {
+      "ruleId": "secret-leak-guard",
+      "ruleName": "Secret & Credential Leak Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "No credential leakage detected",
+      "targetNodeId": "step2_mvm3msyq_f37d89af",
+      "timestamp": "2026-10-24T07:50:21.218Z"
+    },
+    {
+      "ruleId": "sql-injection-guard",
+      "ruleName": "SQL Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "SQL safety analysis passed",
+      "targetNodeId": "step2_mvm3msyq_f37d89af",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "workspace-confinement",
@@ -292,8 +346,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Path check passed within boundary",
-      "targetNodeId": "step3_mvl5d2s7_9441fff3",
-      "timestamp": "2026-10-23T15:51:00.439Z"
+      "targetNodeId": "step3_mvm3msyq_b6da73dc",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "prompt-injection-guard",
@@ -301,8 +355,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "No prompt injection signatures detected",
-      "targetNodeId": "step3_mvl5d2s7_9441fff3",
-      "timestamp": "2026-10-23T15:51:00.439Z"
+      "targetNodeId": "step3_mvm3msyq_b6da73dc",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "loop-deadlock-governor",
@@ -310,8 +364,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Not a tool call",
-      "targetNodeId": "step3_mvl5d2s7_9441fff3",
-      "timestamp": "2026-10-23T15:51:00.439Z"
+      "targetNodeId": "step3_mvm3msyq_b6da73dc",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "destructive-command-guard",
@@ -319,8 +373,26 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Command passed safety analysis",
-      "targetNodeId": "step3_mvl5d2s7_9441fff3",
-      "timestamp": "2026-10-23T15:51:00.439Z"
+      "targetNodeId": "step3_mvm3msyq_b6da73dc",
+      "timestamp": "2026-10-24T07:50:21.218Z"
+    },
+    {
+      "ruleId": "secret-leak-guard",
+      "ruleName": "Secret & Credential Leak Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "No credential leakage detected",
+      "targetNodeId": "step3_mvm3msyq_b6da73dc",
+      "timestamp": "2026-10-24T07:50:21.218Z"
+    },
+    {
+      "ruleId": "sql-injection-guard",
+      "ruleName": "SQL Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a data mutation or tool call",
+      "targetNodeId": "step3_mvm3msyq_b6da73dc",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "workspace-confinement",
@@ -328,8 +400,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Path check passed within boundary",
-      "targetNodeId": "step4_mvl5d2s8_2f9fdaf8",
-      "timestamp": "2026-10-23T15:51:00.440Z"
+      "targetNodeId": "step4_mvm3msyq_8974d2ba",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "prompt-injection-guard",
@@ -337,8 +409,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Not a tool observation",
-      "targetNodeId": "step4_mvl5d2s8_2f9fdaf8",
-      "timestamp": "2026-10-23T15:51:00.440Z"
+      "targetNodeId": "step4_mvm3msyq_8974d2ba",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "loop-deadlock-governor",
@@ -346,8 +418,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Not a tool call",
-      "targetNodeId": "step4_mvl5d2s8_2f9fdaf8",
-      "timestamp": "2026-10-23T15:51:00.440Z"
+      "targetNodeId": "step4_mvm3msyq_8974d2ba",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "destructive-command-guard",
@@ -355,8 +427,26 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Command passed safety analysis",
-      "targetNodeId": "step4_mvl5d2s8_2f9fdaf8",
-      "timestamp": "2026-10-23T15:51:00.440Z"
+      "targetNodeId": "step4_mvm3msyq_8974d2ba",
+      "timestamp": "2026-10-24T07:50:21.218Z"
+    },
+    {
+      "ruleId": "secret-leak-guard",
+      "ruleName": "Secret & Credential Leak Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "No credential leakage detected",
+      "targetNodeId": "step4_mvm3msyq_8974d2ba",
+      "timestamp": "2026-10-24T07:50:21.218Z"
+    },
+    {
+      "ruleId": "sql-injection-guard",
+      "ruleName": "SQL Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "Not a data mutation or tool call",
+      "targetNodeId": "step4_mvm3msyq_8974d2ba",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "workspace-confinement",
@@ -364,8 +454,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Path check passed within boundary",
-      "targetNodeId": "step5_mvl5d2s8_2a1ad816",
-      "timestamp": "2026-10-23T15:51:00.440Z"
+      "targetNodeId": "step5_mvm3msyq_83ab26db",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "prompt-injection-guard",
@@ -373,8 +463,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Not a tool observation",
-      "targetNodeId": "step5_mvl5d2s8_2a1ad816",
-      "timestamp": "2026-10-23T15:51:00.440Z"
+      "targetNodeId": "step5_mvm3msyq_83ab26db",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "loop-deadlock-governor",
@@ -382,8 +472,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Tool call repetitions (1) within allowed threshold",
-      "targetNodeId": "step5_mvl5d2s8_2a1ad816",
-      "timestamp": "2026-10-23T15:51:00.440Z"
+      "targetNodeId": "step5_mvm3msyq_83ab26db",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "destructive-command-guard",
@@ -391,8 +481,26 @@
       "passed": false,
       "severity": "BLOCKING",
       "message": "Destructive command intercepted matching: \\brm\\s+-[rf]{1,2}\\s+[\\/\\*]",
-      "targetNodeId": "step5_mvl5d2s8_2a1ad816",
-      "timestamp": "2026-10-23T15:51:00.440Z"
+      "targetNodeId": "step5_mvm3msyq_83ab26db",
+      "timestamp": "2026-10-24T07:50:21.218Z"
+    },
+    {
+      "ruleId": "secret-leak-guard",
+      "ruleName": "Secret & Credential Leak Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "No credential leakage detected",
+      "targetNodeId": "step5_mvm3msyq_83ab26db",
+      "timestamp": "2026-10-24T07:50:21.218Z"
+    },
+    {
+      "ruleId": "sql-injection-guard",
+      "ruleName": "SQL Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "SQL safety analysis passed",
+      "targetNodeId": "step5_mvm3msyq_83ab26db",
+      "timestamp": "2026-10-24T07:50:21.218Z"
     },
     {
       "ruleId": "workspace-confinement",
@@ -400,8 +508,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Path check passed within boundary",
-      "targetNodeId": "step6_mvl5d2s8_b5afa8b7",
-      "timestamp": "2026-10-23T15:51:00.440Z"
+      "targetNodeId": "step6_mvm3msyr_e69390c9",
+      "timestamp": "2026-10-24T07:50:21.219Z"
     },
     {
       "ruleId": "prompt-injection-guard",
@@ -409,8 +517,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Not a tool observation",
-      "targetNodeId": "step6_mvl5d2s8_b5afa8b7",
-      "timestamp": "2026-10-23T15:51:00.440Z"
+      "targetNodeId": "step6_mvm3msyr_e69390c9",
+      "timestamp": "2026-10-24T07:50:21.219Z"
     },
     {
       "ruleId": "loop-deadlock-governor",
@@ -418,8 +526,8 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Not a tool call",
-      "targetNodeId": "step6_mvl5d2s8_b5afa8b7",
-      "timestamp": "2026-10-23T15:51:00.440Z"
+      "targetNodeId": "step6_mvm3msyr_e69390c9",
+      "timestamp": "2026-10-24T07:50:21.219Z"
     },
     {
       "ruleId": "destructive-command-guard",
@@ -427,72 +535,101 @@
       "passed": true,
       "severity": "BLOCKING",
       "message": "Command passed safety analysis",
-      "targetNodeId": "step6_mvl5d2s8_b5afa8b7",
-      "timestamp": "2026-10-23T15:51:00.440Z"
+      "targetNodeId": "step6_mvm3msyr_e69390c9",
+      "timestamp": "2026-10-24T07:50:21.219Z"
+    },
+    {
+      "ruleId": "secret-leak-guard",
+      "ruleName": "Secret & Credential Leak Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "No credential leakage detected",
+      "targetNodeId": "step6_mvm3msyr_e69390c9",
+      "timestamp": "2026-10-24T07:50:21.219Z"
+    },
+    {
+      "ruleId": "sql-injection-guard",
+      "ruleName": "SQL Injection Guard",
+      "passed": true,
+      "severity": "BLOCKING",
+      "message": "SQL safety analysis passed",
+      "targetNodeId": "step6_mvm3msyr_e69390c9",
+      "timestamp": "2026-10-24T07:50:21.219Z"
     }
   ],
   "blameReport": [
     {
-      "nodeId": "step5_mvl5d2s8_2a1ad816",
+      "nodeId": "step6_mvm3msyr_e69390c9",
+      "stepIndex": 6,
+      "nodeType": "ENVIRONMENT_MUTATION",
+      "title": "execute_shell_failure",
+      "blameScore": 0.725,
+      "entropyShift": 0.6571,
+      "centralityScore": 0.0833,
+      "explanation": "Terminal failure manifested directly at Step 6 (execute_shell_failure).",
+      "counterfactualRecommendation": "Inspect tool parameters or boundary conditions for 'execute_shell_failure'."
+    },
+    {
+      "nodeId": "step5_mvm3msyq_83ab26db",
       "stepIndex": 5,
       "nodeType": "TOOL_CALL",
       "title": "execute_shell",
-      "blameScore": 0.75,
+      "blameScore": 0.6681,
       "entropyShift": 0.7143,
       "centralityScore": 0.1667,
-      "explanation": "Terminal failure manifested directly at Step 5 (execute_shell).",
-      "counterfactualRecommendation": "Inspect tool parameters or boundary conditions for 'execute_shell'."
+      "explanation": "Step 5 invoked 'execute_shell' with malformed or unverified arguments.",
+      "counterfactualRecommendation": "Audit parameter validation rules for tool 'execute_shell'."
     },
     {
-      "nodeId": "step3_mvl5d2s7_9441fff3",
+      "nodeId": "step3_mvm3msyq_b6da73dc",
       "stepIndex": 3,
       "nodeType": "TOOL_OBSERVATION",
       "title": "read_logs_output",
-      "blameScore": 0.5534,
+      "blameScore": 0.5373,
       "entropyShift": 0.4143,
       "centralityScore": 0.1667,
-      "explanation": "Step 3 (read_logs_output) returned an anomalous or unparsed payload that causally propagated into execute_shell at Step 5.",
+      "explanation": "Step 3 (read_logs_output) returned an anomalous or unparsed payload that causally propagated into execute_shell_failure at Step 6.",
       "counterfactualRecommendation": "Sanitize or validate return schema of tool 'read_logs' before passing to model context."
     },
     {
-      "nodeId": "step1_mvl5d2s6_2cdb02b8",
+      "nodeId": "step1_mvm3msyo_65f8b0ff",
       "stepIndex": 1,
       "nodeType": "MODEL_REASONING",
       "title": "Plan: Read auth service logs",
-      "blameScore": 0.2516,
+      "blameScore": 0.2466,
       "entropyShift": 0.2357,
       "centralityScore": 0.1667,
-      "explanation": "Step 1 adopted a flawed chain-of-thought premise or hallucinated arguments that led directly to downstream failure at Step 5.",
+      "explanation": "Step 1 adopted a flawed chain-of-thought premise or hallucinated arguments that led directly to downstream failure at Step 6.",
       "counterfactualRecommendation": "Inject counterfactual system guidance or prompt constraint prior to Step 1."
     },
     {
-      "nodeId": "step0_mvl5d2s4_f6ae5dfe",
+      "nodeId": "step0_mvm3msym_933a4140",
       "stepIndex": 0,
       "nodeType": "USER_INPUT",
       "title": "User Request: Fix auth token refresh",
-      "blameScore": 0.2216,
+      "blameScore": 0.2179,
       "entropyShift": 0.25,
       "centralityScore": 0.0833,
-      "explanation": "Step 0 causally influenced downstream failure with attribution weight 22.2%.",
+      "explanation": "Step 0 causally influenced downstream failure with attribution weight 21.8%.",
       "counterfactualRecommendation": "Review state transition at Step 0."
     },
     {
-      "nodeId": "step4_mvl5d2s8_2f9fdaf8",
+      "nodeId": "step4_mvm3msyq_8974d2ba",
       "stepIndex": 4,
       "nodeType": "MODEL_REASONING",
       "title": "Flawed Assumption: File does not exist",
-      "blameScore": 0.1681,
+      "blameScore": 0.1453,
       "entropyShift": 0,
       "centralityScore": 0.1667,
-      "explanation": "Step 4 adopted a flawed chain-of-thought premise or hallucinated arguments that led directly to downstream failure at Step 5.",
+      "explanation": "Step 4 adopted a flawed chain-of-thought premise or hallucinated arguments that led directly to downstream failure at Step 6.",
       "counterfactualRecommendation": "Inject counterfactual system guidance or prompt constraint prior to Step 4."
     },
     {
-      "nodeId": "step2_mvl5d2s7_c63e3767",
+      "nodeId": "step2_mvm3msyq_f37d89af",
       "stepIndex": 2,
       "nodeType": "TOOL_CALL",
       "title": "read_logs",
-      "blameScore": 0.1338,
+      "blameScore": 0.1266,
       "entropyShift": 0,
       "centralityScore": 0.1667,
       "explanation": "Step 2 invoked 'read_logs' with malformed or unverified arguments.",

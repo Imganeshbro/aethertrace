@@ -51,15 +51,21 @@ export class TimeTravelEngine {
       this.baseBundle.metadata.agentCommand
     );
 
+    const idMap = new Map<string, string>();
+
     // Replay historical steps [0 ... forkAtStep - 1] with zero token cost
     for (let i = 0; i < forkAtStep; i++) {
       const historical = this.baseBundle.nodes[i];
-      await forkRecorder.recordStep(
+      const remappedParents = historical.causalParents
+        .map((oldId) => idMap.get(oldId))
+        .filter(Boolean) as string[];
+
+      const newNode = await forkRecorder.recordStep(
         historical.type,
         historical.title,
         historical.content,
         {
-          causalParents: historical.causalParents,
+          causalParents: remappedParents.length > 0 ? remappedParents : (i > 0 ? [forkRecorder.getNodes()[i - 1].id] : []),
           metadata: {
             ...historical.metadata,
             ghostReplay: true,
@@ -69,19 +75,23 @@ export class TimeTravelEngine {
           costUsd: 0
         }
       );
+      idMap.set(historical.id, newNode.id);
     }
 
     // Inject the counterfactual fork step
     const originalStep = this.baseBundle.nodes[forkAtStep];
     const newContent = overridePayload !== undefined ? overridePayload : originalStep.content;
     const newTitle = overrideTitle || `[FORK] ${originalStep.title}`;
+    const remappedForkParents = originalStep.causalParents
+      .map((oldId) => idMap.get(oldId))
+      .filter(Boolean) as string[];
 
     await forkRecorder.recordStep(
       originalStep.type,
       newTitle,
       newContent,
       {
-        causalParents: forkAtStep > 0 ? [forkRecorder.getNodes()[forkAtStep - 1].id] : [],
+        causalParents: remappedForkParents.length > 0 ? remappedForkParents : (forkAtStep > 0 ? [forkRecorder.getNodes()[forkAtStep - 1].id] : []),
         metadata: {
           ...originalStep.metadata,
           isCounterfactualFork: true,

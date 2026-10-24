@@ -16,7 +16,7 @@ export class DashboardGenerator {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AetherTrace Studio - ${bundle.metadata.sessionName}</title>
+  <title>AgentRewind Studio - ${bundle.metadata.sessionName}</title>
   <style>
     :root {
       --bg: #0b0f19;
@@ -176,8 +176,8 @@ export class DashboardGenerator {
 <body>
   <header>
     <div class="brand">
-      <span>AetherTrace</span>
-      <span class="logo-badge">AGENT HYPERVISOR</span>
+      <span>AgentRewind</span>
+      <span class="logo-badge">TIME-TRAVEL DEBUGGER</span>
     </div>
     <div class="session-meta">
       <span>Session: <strong>${bundle.metadata.sessionName}</strong></span>

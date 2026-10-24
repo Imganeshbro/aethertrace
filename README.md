@@ -1,13 +1,14 @@
 <div align="center">
 
-  <img src="assets/hero-banner.svg" alt="AetherTrace Hero Banner" width="100%" />
+  <img src="assets/hero-banner.svg" alt="AgentRewind Hero Banner" width="100%" />
 
   <br />
 
-  <h3>Deterministic Causal Hypervisor, Time-Travel Debugger, &amp; Invariant Verification Engine for Autonomous AI Agents</h3>
+  <h1>AgentRewind ⏪⚡</h1>
+  <h3>Deterministic Time-Travel Debugger, Causal Flight Recorder, &amp; Invariant Verification Engine for Autonomous AI Agents</h3>
 
   <p>
-    <strong>Debug, audit, and mathematically pinpoint root-cause failures in multi-step AI agents with zero-token deterministic replay.</strong>
+    <strong>Rewind, replay, audit, and mathematically pinpoint root-cause failures in multi-step AI agents with zero-token deterministic replay.</strong>
   </p>
 
   <p>
@@ -15,14 +16,14 @@
     <a href="https://github.com/Imganeshbro/aethertrace/network/members"><img src="https://img.shields.io/github/forks/Imganeshbro/aethertrace?style=for-the-badge&logo=github&color=818cf8&labelColor=0f172a" alt="Forks" /></a>
     <a href="https://github.com/Imganeshbro/aethertrace/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-10b981?style=for-the-badge&logo=open-source-initiative&labelColor=0f172a" alt="License" /></a>
     <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Runtime-Node.js_v24%2B-22c55e?style=for-the-badge&logo=node.js&labelColor=0f172a" alt="Node v24+" /></a>
-    <a href="#"><img src="https://img.shields.io/badge/Tests-25%2F25_Passing-38bdf8?style=for-the-badge&logo=vitest&labelColor=0f172a" alt="Tests Passing" /></a>
+    <a href="#"><img src="https://img.shields.io/badge/Tests-26%2F26_Passing-38bdf8?style=for-the-badge&logo=vitest&labelColor=0f172a" alt="Tests Passing" /></a>
     <a href="#"><img src="https://img.shields.io/badge/MCP-Native_Server-818cf8?style=for-the-badge&logo=anthropic&labelColor=0f172a" alt="MCP Server" /></a>
     <a href="#"><img src="https://img.shields.io/badge/Plugin-Antigravity_%26_Claude-c084fc?style=for-the-badge&labelColor=0f172a" alt="Plugin Ready" /></a>
   </p>
 
   <p>
     <a href="#-quickstart">Quickstart</a> •
-    <a href="#-the-post-ai-crisis">Why AetherTrace?</a> •
+    <a href="#-the-post-ai-crisis">Why AgentRewind?</a> •
     <a href="#-architecture">Architecture</a> •
     <a href="#-interactive-studio--screenshots">Screenshots</a> •
     <a href="#-core-capabilities">Key Features</a> •
@@ -161,23 +162,29 @@ cd aethertrace
 Experience an end-to-end agent failure, causal blame localization, security invariant veto, time-travel fork, and CI test synthesis:
 ```bash
 npm run demo
+# or using CLI directly:
+npx agent-rewind demo
 ```
 
 ### 3. Run the Test Suite
 ```bash
 npm test
 ```
-*All 21 unit, property, and end-to-end simulation tests execute in under 400ms!*
+*All 26 unit, property, and end-to-end simulation tests execute in under 550ms!*
 
 ### 4. Inspect Any Trace in the Web Studio
 ```bash
 npm run inspect traces/demo_failure.atrace
+# or
+npx agent-rewind inspect traces/demo_failure.atrace
 # Opens interactive Canvas Studio at http://localhost:4200
 ```
 
 ### 5. Run Causal Blame Analysis
 ```bash
 npm run blame traces/demo_failure.atrace
+# or
+npx agent-rewind blame traces/demo_failure.atrace
 ```
 
 ---

@@ -17,6 +17,7 @@ export class CausalGraph {
     for (const node of initialNodes) {
       this.addNode(node);
     }
+    // Only add explicit initialEdges if they do not already exist
     for (const edge of initialEdges) {
       this.addEdge(edge);
     }
@@ -33,18 +34,34 @@ export class CausalGraph {
     // If node explicitly declares causal parents, create edges
     for (const parentId of node.causalParents) {
       if (this.nodes.has(parentId)) {
-        this.addCausalLink(parentId, node.id, this.inferRelation(this.nodes.get(parentId)!, node));
+        // Prevent duplicate link if edge already exists
+        const alreadyLinked = (this.outgoing.get(parentId) || []).includes(node.id);
+        if (!alreadyLinked) {
+          this.addCausalLink(parentId, node.id, this.inferRelation(this.nodes.get(parentId)!, node));
+        }
       }
     }
   }
 
   /**
-   * Adds an edge between two causal nodes.
+   * Adds an edge between two causal nodes without duplicates.
    */
   public addEdge(edge: CausalEdge): void {
+    if (this.edges.has(edge.id)) return;
+
+    const outList = this.outgoing.get(edge.source) || [];
+    if (!outList.includes(edge.target)) {
+      outList.push(edge.target);
+      this.outgoing.set(edge.source, outList);
+    }
+
+    const inList = this.incoming.get(edge.target) || [];
+    if (!inList.includes(edge.source)) {
+      inList.push(edge.source);
+      this.incoming.set(edge.target, inList);
+    }
+
     this.edges.set(edge.id, edge);
-    this.outgoing.get(edge.source)?.push(edge.target);
-    this.incoming.get(edge.target)?.push(edge.source);
   }
 
   /**
@@ -239,19 +256,22 @@ export class CausalGraph {
     const lines = ['flowchart TD'];
 
     for (const node of this.getAllNodes()) {
-      const safeTitle = node.title.replace(/"/g, "'");
+      const safeId = node.id.replace(/[^a-zA-Z0-9_]/g, '_');
+      const safeTitle = node.title.replace(/["\n\r\[\]]/g, "'");
       let shape = `["${node.stepIndex}. ${safeTitle}"]`;
       if (node.type === 'TOOL_CALL') shape = `[["${node.stepIndex}. TOOL: ${safeTitle}"]]`;
       if (node.type === 'INVARIANT_EVALUATION') shape = `{"${node.stepIndex}. INVARIANT: ${safeTitle}"}`;
       if (node.status === 'ERROR' || node.status === 'VETOED') {
-        lines.push(`    ${node.id}${shape}:::errNode`);
+        lines.push(`    ${safeId}${shape}:::errNode`);
       } else {
-        lines.push(`    ${node.id}${shape}`);
+        lines.push(`    ${safeId}${shape}`);
       }
     }
 
     for (const edge of this.getAllEdges()) {
-      lines.push(`    ${edge.source} -->|${edge.relation}| ${edge.target}`);
+      const safeSource = edge.source.replace(/[^a-zA-Z0-9_]/g, '_');
+      const safeTarget = edge.target.replace(/[^a-zA-Z0-9_]/g, '_');
+      lines.push(`    ${safeSource} -->|${edge.relation}| ${safeTarget}`);
     }
 
     lines.push('    classDef errNode fill:#f87171,stroke:#b91c1c,stroke-width:2px,color:#000;');

@@ -14,8 +14,8 @@ import type { TraceBundle } from '../types/index.ts';
 function printBanner() {
   console.log(`
   \x1b[36m╔═════════════════════════════════════════════════════════════════╗\x1b[0m
-  \x1b[36m║\x1b[0m   \x1b[1m\x1b[34mAETHERTRACE\x1b[0m \x1b[90m— Autonomous Agent Causal Hypervisor\x1b[0m             \x1b[36m║\x1b[0m
-  \x1b[36m║\x1b[0m   \x1b[32mDeterministic Replay\x1b[0m | \x1b[35mCausal Blame\x1b[0m | \x1b[33mActive Invariants\x1b[0m    \x1b[36m║\x1b[0m
+  \x1b[36m║\x1b[0m   \x1b[1m\x1b[34mAGENTREWIND\x1b[0m \x1b[90m— Time-Travel Debugger for AI Agents\x1b[0m            \x1b[36m║\x1b[0m
+  \x1b[36m║\x1b[0m   \x1b[32mZero-Token Replay\x1b[0m | \x1b[35mCausal Blame\x1b[0m | \x1b[33mActive Invariants\x1b[0m        \x1b[36m║\x1b[0m
   \x1b[36m╚═════════════════════════════════════════════════════════════════╝\x1b[0m
   `);
 }
@@ -24,26 +24,27 @@ function printHelp() {
   printBanner();
   console.log(`
   \x1b[1mUSAGE:\x1b[0m
-    aethertrace <command> [options]
+    agent-rewind <command> [options]
+    (Aliases: rewind, aethertrace)
 
   \x1b[1mCOMMANDS:\x1b[0m
     \x1b[32mdemo\x1b[0m                               Run interactive multi-step agent simulation demo
     \x1b[32mblame\x1b[0m <trace.atrace>                Analyze causal root causes of an agent failure
     \x1b[32minspect\x1b[0m <trace.atrace> [--port 4200]  Launch interactive visual web studio & DAG visualizer
-    \x1b[32mreplay\x1b[0m <trace.atrace> [--fork-at N]   Replay or fork execution at specific step
+    \x1b[32mreplay\x1b[0m <trace.atrace> [--fork-at N]   Rewind and fork execution at specific step
     \x1b[32msynth\x1b[0m <trace.atrace> [--output file]  Synthesize zero-token deterministic CI test suite
     \x1b[32mmcp\x1b[0m                                 Launch Model Context Protocol (MCP) stdio server
 
   \x1b[1mEXAMPLES:\x1b[0m
-    node --experimental-strip-types src/cli/index.ts demo
-    node --experimental-strip-types src/cli/index.ts blame traces/demo_failure.atrace
-    node --experimental-strip-types src/cli/index.ts inspect traces/demo_failure.atrace
+    npx agent-rewind demo
+    npx agent-rewind blame traces/demo_failure.atrace
+    npx agent-rewind inspect traces/demo_failure.atrace
   `);
 }
 
 export async function runDemo(): Promise<void> {
   printBanner();
-  console.log('\x1b[1m[1/4] Initializing AetherTrace Autonomous Agent Simulation...\x1b[0m');
+  console.log('\x1b[1m[1/4] Initializing AgentRewind Autonomous Agent Simulation...\x1b[0m');
 
   const recorder = new FlightRecorder('demo_autonomous_bug_fixer', 'agent fix-auth-flow');
 

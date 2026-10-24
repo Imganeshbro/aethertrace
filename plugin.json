@@ -1,16 +1,16 @@
 {
-  "name": "aethertrace",
+  "name": "agent-rewind",
   "version": "1.0.0",
-  "displayName": "AetherTrace Agent Hypervisor",
-  "description": "Deterministic Causal Hypervisor, Time-Travel Debugger, and Invariant Verification Engine for Autonomous AI Agents.",
+  "displayName": "AgentRewind Time-Travel Debugger",
+  "description": "Deterministic Time-Travel Debugger, Causal Flight Recorder, and Invariant Verification Engine for Autonomous AI Agents.",
   "author": "Ganesh (@Imganeshbro)",
   "license": "Apache-2.0",
   "homepage": "https://github.com/Imganeshbro/aethertrace",
   "mcpServers": {
-    "aethertrace": {
+    "agent-rewind": {
       "command": "node",
       "args": ["--experimental-strip-types", "${pluginRoot}/src/mcp/server.ts"]
     }
   },
-  "skills": ["skills/aethertrace"]
+  "skills": ["skills/agent-rewind"]
 }

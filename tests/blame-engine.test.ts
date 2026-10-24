@@ -78,4 +78,20 @@ describe('CausalBlameEngine', () => {
     const report = blameEngine.attributeBlame();
     assert.strictEqual(report.length, 0);
   });
+
+  test('does not penalize user input mentioning error keywords as an anomaly', () => {
+    const graph = new CausalGraph();
+    const s0 = createNode('s0', 0, 'USER_INPUT', 'Debug authentication failure and 500 error', {});
+    const s1 = createNode('s1', 1, 'MODEL_REASONING', 'Reasoning step', {}, 'SUCCESS', ['s0']);
+    const s2 = createNode('s2', 2, 'TOOL_CALL', 'query', { error: 'socket closed' }, 'ERROR', ['s1']);
+
+    graph.addNode(s0);
+    graph.addNode(s1);
+    graph.addNode(s2);
+
+    const blameEngine = new CausalBlameEngine(graph);
+    const blameReport = blameEngine.attributeBlame();
+    const userPromptScore = blameReport.find(b => b.nodeId === 's0');
+    assert.strictEqual(userPromptScore?.entropyShift, 0);
+  });
 });

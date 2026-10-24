@@ -8,6 +8,7 @@ export interface McpProxyOptions {
   serverArgs: string[];
   recorder: FlightRecorder;
   firewall?: AgentFirewall;
+  onResponse?: (response: string) => void;
 }
 
 export class McpProxy {
@@ -15,6 +16,7 @@ export class McpProxy {
   private serverArgs: string[];
   private recorder: FlightRecorder;
   private firewall?: AgentFirewall;
+  private onResponse?: (response: string) => void;
   private childProcess: ChildProcess | null = null;
   private activeCallMap: Map<string | number, { toolName: string; args: unknown; startTime: number }> = new Map();
 
@@ -23,6 +25,7 @@ export class McpProxy {
     this.serverArgs = options.serverArgs;
     this.recorder = options.recorder;
     this.firewall = options.firewall || options.recorder.getFirewall();
+    this.onResponse = options.onResponse;
   }
 
   /**
@@ -80,9 +83,12 @@ export class McpProxy {
             id: msg.id,
             error: {
               code: -32603,
-              message: `AetherTrace Firewall Veto: Execution blocked by active safety invariant`
+              message: `AgentRewind Firewall Veto: Execution blocked by active safety invariant`
             }
           });
+          if (this.onResponse) {
+            this.onResponse(vetoResponse);
+          }
           return vetoResponse;
         }
 
@@ -134,8 +140,12 @@ export class McpProxy {
       // Pass-through logging if unparseable
     }
 
-    // Forward to parent stdout stream for agent consumer
-    process.stdout.write(rawResponse + '\n');
+    // Forward to parent output stream or callback for agent consumer
+    if (this.onResponse) {
+      this.onResponse(rawResponse);
+    } else {
+      process.stdout.write(rawResponse + '\n');
+    }
   }
 
   public stop(): void {

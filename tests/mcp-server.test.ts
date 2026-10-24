@@ -16,7 +16,7 @@ describe('AetherTrace MCP Server (Model Context Protocol)', () => {
     const initRes: any = await server.handleMessage(initReq);
 
     assert.strictEqual(initRes.id, 1);
-    assert.strictEqual(initRes.result.serverInfo.name, 'aethertrace-mcp-server');
+    assert.strictEqual(initRes.result.serverInfo.name, 'agent-rewind-mcp-server');
     assert.ok(initRes.result.capabilities.tools);
 
     // 2. tools/list discovery
@@ -32,11 +32,11 @@ describe('AetherTrace MCP Server (Model Context Protocol)', () => {
     const tools = listRes.result.tools;
     assert.ok(tools.length >= 5);
     const toolNames = tools.map((t: any) => t.name);
-    assert.ok(toolNames.includes('aethertrace_record_step'));
-    assert.ok(toolNames.includes('aethertrace_get_causal_blame'));
-    assert.ok(toolNames.includes('aethertrace_evaluate_invariant'));
-    assert.ok(toolNames.includes('aethertrace_time_travel_fork'));
-    assert.ok(toolNames.includes('aethertrace_synth_regression_test'));
+    assert.ok(toolNames.includes('agent_rewind_record_step'));
+    assert.ok(toolNames.includes('agent_rewind_get_causal_blame'));
+    assert.ok(toolNames.includes('agent_rewind_evaluate_invariant'));
+    assert.ok(toolNames.includes('agent_rewind_time_travel_fork'));
+    assert.ok(toolNames.includes('agent_rewind_synth_regression_test'));
   });
 
   test('executes aethertrace_evaluate_invariant tool call', async () => {

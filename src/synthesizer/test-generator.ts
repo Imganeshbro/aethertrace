@@ -29,10 +29,17 @@ export class TestSynthesizer {
 
     const serializedMockMap = toolCalls.map((tc, idx) => {
       const matchingObs = toolObservations.find(o => o.causalParents.includes(tc.id)) || toolObservations[idx];
+      let fallbackMock: Record<string, unknown> = { success: true };
+      if (tc.status === 'VETOED') {
+        fallbackMock = { vetoed: true, error: 'Execution blocked by AgentRewind safety invariant' };
+      } else if (tc.status === 'ERROR') {
+        fallbackMock = { error: tc.metadata.error || 'Tool execution failed' };
+      }
+
       return {
         toolName: tc.metadata.toolName || tc.title,
         expectedArgs: tc.content,
-        mockResponse: matchingObs ? matchingObs.content : { success: true }
+        mockResponse: matchingObs ? matchingObs.content : fallbackMock
       };
     });
 

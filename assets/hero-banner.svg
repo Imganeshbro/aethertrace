@@ -74,18 +74,18 @@
   <!-- Left Content Branding -->
   <g transform="translate(70, 75)">
     <!-- Badge -->
-    <rect width="210" height="28" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <rect width="230" height="28" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1" />
     <circle cx="16" cy="14" r="4" fill="#10b981" />
-    <text x="28" y="19" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto" font-size="11" font-weight="600" fill="#cbd5e1" letter-spacing="0.08em">AGENT HYPERVISOR v1.0</text>
+    <text x="28" y="19" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto" font-size="11" font-weight="600" fill="#cbd5e1" letter-spacing="0.08em">TIME-TRAVEL DEBUGGER v1.0</text>
 
     <!-- Main Title -->
     <text x="0" y="85" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="54" font-weight="900" fill="url(#titleGrad)" letter-spacing="-0.02em">
-      AetherTrace
+      AgentRewind
     </text>
 
     <!-- Subtitle / Tagline -->
     <text x="0" y="125" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="20" font-weight="600" fill="#f1f5f9">
-      Deterministic Causal Hypervisor &amp; Time-Travel Debugger
+      Deterministic Time-Travel Debugger &amp; Causal Flight Recorder
     </text>
     <text x="0" y="152" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="15" fill="#94a3b8">
       Zero-Token Replay • Causal Blame Localization • Active Invariant Firewall • MCP Native

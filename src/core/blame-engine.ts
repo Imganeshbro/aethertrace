@@ -18,6 +18,12 @@ export class CausalBlameEngine {
    * Analyzes payload content, error indicators, schema mismatches, and status.
    */
   private computeAnomalySignal(node: TrajectoryNode): number {
+    // User goals and system prompts frequently mention "error" or "failure" (e.g. "fix this bug").
+    // They must not be penalized as execution anomalies unless explicitly vetoed or errored.
+    if (node.type === 'USER_INPUT' || node.type === 'SYSTEM_PROMPT') {
+      return node.status === 'ERROR' || node.status === 'VETOED' ? 0.9 : 0.0;
+    }
+
     let score = 0.0;
 
     // Explicit error or warning statuses

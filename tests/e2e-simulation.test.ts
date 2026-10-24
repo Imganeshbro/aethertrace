@@ -63,7 +63,7 @@ describe('AetherTrace End-to-End Autonomous Hypervisor Suite', () => {
 
     // 5. Dashboard Generation
     const html = DashboardGenerator.generateHtml(forkedBundle);
-    assert.ok(html.includes('AetherTrace Studio'));
-    assert.ok(html.includes('AGENT HYPERVISOR'));
+    assert.ok(html.includes('AgentRewind Studio'));
+    assert.ok(html.includes('TIME-TRAVEL DEBUGGER'));
   });
 });

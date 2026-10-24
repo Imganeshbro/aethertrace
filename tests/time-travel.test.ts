@@ -35,5 +35,10 @@ describe('TimeTravelEngine', () => {
     const diff = TimeTravelEngine.compareTrajectories(bundle, forkedBundle, 2);
     assert.strictEqual(diff.forkStep, 2);
     assert.strictEqual(diff.resolvedFailure, true);
+
+    // Verify causal links were properly remapped to new node IDs
+    const forkedNodes = forkedRecorder.getNodes();
+    assert.strictEqual(forkedNodes[1].causalParents[0], forkedNodes[0].id);
+    assert.ok(forkedRecorder.getGraph().getAllEdges().length >= 3);
   });
 });

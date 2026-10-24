@@ -14,7 +14,7 @@ describe('DashboardGenerator', () => {
     const html = DashboardGenerator.generateHtml(bundle);
 
     assert.ok(html.includes('<!DOCTYPE html>'));
-    assert.ok(html.includes('AetherTrace Studio - web_studio_test'));
+    assert.ok(html.includes('AgentRewind Studio - web_studio_test'));
     assert.ok(html.includes('graphCanvas'));
     assert.ok(html.includes('scrubber'));
     assert.ok(html.includes('blameTab'));

@@ -128,6 +128,10 @@ export class FlightRecorder {
     return node;
   }
 
+  public setStatus(status: 'SUCCESS' | 'FAILED' | 'VETOED'): void {
+    this.status = status;
+  }
+
   /**
    * Finalizes the trajectory and generates the complete TraceBundle.
    */
@@ -140,6 +144,8 @@ export class FlightRecorder {
       const hasErrors = this.nodes.some(n => n.status === 'ERROR');
       if (hasErrors) finalStatus = 'FAILED';
     }
+
+    this.status = finalStatus;
 
     // Run causal blame analysis if failed or vetoed
     let blameReport: BlameScore[] | undefined;

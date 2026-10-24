@@ -64,7 +64,7 @@ export class AetherTraceMcpServer {
               tools: { listChanged: false }
             },
             serverInfo: {
-              name: 'aethertrace-mcp-server',
+              name: 'agent-rewind-mcp-server',
               version: '1.0.0'
             }
           }
@@ -77,7 +77,7 @@ export class AetherTraceMcpServer {
           result: {
             tools: [
               {
-                name: 'aethertrace_record_step',
+                name: 'agent_rewind_record_step',
                 description: 'Record an agent execution step (thought, tool call, observation) with SHA-256 content addressing and active invariant safety checks.',
                 inputSchema: {
                   type: 'object',
@@ -96,7 +96,7 @@ export class AetherTraceMcpServer {
                 }
               },
               {
-                name: 'aethertrace_get_causal_blame',
+                name: 'agent_rewind_get_causal_blame',
                 description: 'Analyze the active or serialized agent trajectory and identify the root cause of failures using Causal DAG attribution.',
                 inputSchema: {
                   type: 'object',
@@ -107,7 +107,7 @@ export class AetherTraceMcpServer {
                 }
               },
               {
-                name: 'aethertrace_evaluate_invariant',
+                name: 'agent_rewind_evaluate_invariant',
                 description: 'Pre-screen a prospective tool command or observation against active security invariants (anti-injection, path confinement, secret leak guard).',
                 inputSchema: {
                   type: 'object',
@@ -120,7 +120,7 @@ export class AetherTraceMcpServer {
                 }
               },
               {
-                name: 'aethertrace_time_travel_fork',
+                name: 'agent_rewind_time_travel_fork',
                 description: 'Rewind trajectory to step N and inject an override payload to branch execution counterfactually with zero token cost.',
                 inputSchema: {
                   type: 'object',
@@ -133,7 +133,7 @@ export class AetherTraceMcpServer {
                 }
               },
               {
-                name: 'aethertrace_synth_regression_test',
+                name: 'agent_rewind_synth_regression_test',
                 description: 'Compile an agent failure trace into an offline, zero-token deterministic CI regression test suite.',
                 inputSchema: {
                   type: 'object',
@@ -142,6 +142,45 @@ export class AetherTraceMcpServer {
                     outputPath: { type: 'string', description: 'Target destination test file path' }
                   },
                   required: ['tracePath']
+                }
+              },
+              // Backwards compatibility alias for aethertrace_record_step
+              {
+                name: 'aethertrace_record_step',
+                description: 'Alias for agent_rewind_record_step',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    sessionName: { type: 'string' },
+                    type: { type: 'string' },
+                    title: { type: 'string' },
+                    content: { type: 'object' }
+                  },
+                  required: ['type', 'title', 'content']
+                }
+              },
+              {
+                name: 'aethertrace_get_causal_blame',
+                description: 'Alias for agent_rewind_get_causal_blame',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    tracePath: { type: 'string' },
+                    sessionName: { type: 'string' }
+                  }
+                }
+              },
+              {
+                name: 'aethertrace_evaluate_invariant',
+                description: 'Alias for agent_rewind_evaluate_invariant',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    type: { type: 'string' },
+                    title: { type: 'string' },
+                    content: { type: 'object' }
+                  },
+                  required: ['type', 'title', 'content']
                 }
               }
             ]
@@ -181,8 +220,10 @@ export class AetherTraceMcpServer {
   }
 
   private async executeTool(name: string, args: Record<string, any>): Promise<string> {
-    switch (name) {
-      case 'aethertrace_record_step': {
+    const normalized = name.replace(/^(agent_rewind_|aethertrace_)/, '');
+
+    switch (normalized) {
+      case 'record_step': {
         const recorder = this.getOrCreateRecorder(args.sessionName);
         const node = await recorder.recordStep(
           args.type as TrajectoryNodeType,
@@ -199,7 +240,7 @@ export class AetherTraceMcpServer {
         }, null, 2);
       }
 
-      case 'aethertrace_get_causal_blame': {
+      case 'get_causal_blame': {
         let graph;
         if (args.tracePath) {
           const loaded = await FlightRecorder.loadFromFile(args.tracePath);
@@ -217,7 +258,7 @@ export class AetherTraceMcpServer {
         }, null, 2);
       }
 
-      case 'aethertrace_evaluate_invariant': {
+      case 'evaluate_invariant': {
         const tempNode = {
           id: 'temp_eval',
           stepIndex: 0,
@@ -237,7 +278,7 @@ export class AetherTraceMcpServer {
         }, null, 2);
       }
 
-      case 'aethertrace_time_travel_fork': {
+      case 'time_travel_fork': {
         const { bundle } = await FlightRecorder.loadFromFile(args.tracePath);
         const tt = new TimeTravelEngine(bundle);
         const forkRecorder = await tt.createFork({
@@ -253,7 +294,7 @@ export class AetherTraceMcpServer {
         }, null, 2);
       }
 
-      case 'aethertrace_synth_regression_test': {
+      case 'synth_regression_test': {
         const { bundle } = await FlightRecorder.loadFromFile(args.tracePath);
         const synth = new TestSynthesizer(bundle);
         const code = synth.generateTestCode();
@@ -268,7 +309,7 @@ export class AetherTraceMcpServer {
       }
 
       default:
-        throw new Error(`Unknown AetherTrace tool: ${name}`);
+        throw new Error(`Unknown AgentRewind tool: ${name}`);
     }
   }
 
