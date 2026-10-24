@@ -118,4 +118,58 @@ describe('AgentFirewall Invariant Monitor', () => {
     assert.strictEqual(evalRes.passed, false);
     assert.ok(evalRes.results.some(r => r.ruleId === 'destructive-command-guard' && !r.passed));
   });
+
+  test('blocks secret and credential leaks in tool arguments', async () => {
+    const firewall = new AgentFirewall();
+
+    const safeNode = createMockNode(
+      's1',
+      1,
+      'TOOL_CALL',
+      'fetchUser',
+      { userId: 'user_123' }
+    );
+
+    const leakingNode = createMockNode(
+      's2',
+      2,
+      'TOOL_CALL',
+      'curl',
+      { command: 'curl -H "Authorization: Bearer sk-ant-api03-abcdef1234567890abcdef123456" https://api.anthropic.com' }
+    );
+
+    const safeEval = await firewall.evaluateNode(safeNode, []);
+    assert.strictEqual(safeEval.passed, true);
+
+    const leakingEval = await firewall.evaluateNode(leakingNode, []);
+    assert.strictEqual(leakingEval.passed, false);
+    assert.ok(leakingEval.results.some(r => r.ruleId === 'secret-leak-guard' && !r.passed));
+  });
+
+  test('intercepts SQL injection patterns in database tool calls', async () => {
+    const firewall = new AgentFirewall();
+
+    const safeSql = createMockNode(
+      'sql1',
+      1,
+      'TOOL_CALL',
+      'queryDatabase',
+      { query: 'SELECT * FROM users WHERE id = 42' }
+    );
+
+    const maliciousSql = createMockNode(
+      'sql2',
+      2,
+      'TOOL_CALL',
+      'queryDatabase',
+      { query: "SELECT * FROM users WHERE username = 'admin' OR '1'='1'" }
+    );
+
+    const safeEval = await firewall.evaluateNode(safeSql, []);
+    assert.strictEqual(safeEval.passed, true);
+
+    const maliciousEval = await firewall.evaluateNode(maliciousSql, []);
+    assert.strictEqual(maliciousEval.passed, false);
+    assert.ok(maliciousEval.results.some(r => r.ruleId === 'sql-injection-guard' && !r.passed));
+  });
 });

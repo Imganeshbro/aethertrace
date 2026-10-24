@@ -8,6 +8,7 @@ import { AgentFirewall } from '../core/firewall.ts';
 import { TimeTravelEngine } from '../core/time-travel.ts';
 import { TestSynthesizer } from '../synthesizer/test-generator.ts';
 import { DashboardGenerator } from '../ui/dashboard-generator.ts';
+import { AetherTraceMcpServer } from '../mcp/server.ts';
 import type { TraceBundle } from '../types/index.ts';
 
 function printBanner() {
@@ -31,6 +32,7 @@ function printHelp() {
     \x1b[32minspect\x1b[0m <trace.atrace> [--port 4200]  Launch interactive visual web studio & DAG visualizer
     \x1b[32mreplay\x1b[0m <trace.atrace> [--fork-at N]   Replay or fork execution at specific step
     \x1b[32msynth\x1b[0m <trace.atrace> [--output file]  Synthesize zero-token deterministic CI test suite
+    \x1b[32mmcp\x1b[0m                                 Launch Model Context Protocol (MCP) stdio server
 
   \x1b[1mEXAMPLES:\x1b[0m
     node --experimental-strip-types src/cli/index.ts demo
@@ -248,6 +250,10 @@ export async function main() {
         const outPath = outArg !== -1 ? args[outArg + 1] : './tests/synthetic_regression.test.ts';
         await fs.writeFile(path.resolve(outPath), code, 'utf-8');
         console.log(`\x1b[32m✔ Test generated at: ${outPath}\x1b[0m`);
+        break;
+      case 'mcp':
+        const mcpServer = new AetherTraceMcpServer();
+        mcpServer.startStdio();
         break;
       default:
         printHelp();

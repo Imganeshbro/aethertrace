@@ -12,4 +12,5 @@ export * from './core/recorder.ts';
 export * from './core/time-travel.ts';
 export * from './synthesizer/test-generator.ts';
 export * from './proxy/mcp-proxy.ts';
+export * from './mcp/server.ts';
 export * from './ui/dashboard-generator.ts';

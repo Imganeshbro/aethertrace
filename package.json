@@ -5,7 +5,8 @@
   "main": "src/index.ts",
   "type": "module",
   "bin": {
-    "aethertrace": "./bin/aethertrace.js"
+    "aethertrace": "./bin/aethertrace.js",
+    "aethertrace-mcp": "./bin/aethertrace-mcp.js"
   },
   "scripts": {
     "test": "node --experimental-strip-types --test tests/**/*.test.ts",
@@ -13,7 +14,8 @@
     "demo": "node --experimental-strip-types src/cli/index.ts demo",
     "inspect": "node --experimental-strip-types src/cli/index.ts inspect",
     "blame": "node --experimental-strip-types src/cli/index.ts blame",
-    "replay": "node --experimental-strip-types src/cli/index.ts replay"
+    "replay": "node --experimental-strip-types src/cli/index.ts replay",
+    "mcp": "node --experimental-strip-types src/mcp/server.ts"
   },
   "keywords": [
     "ai-agents",

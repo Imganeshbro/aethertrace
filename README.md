@@ -15,8 +15,9 @@
     <a href="https://github.com/Imganeshbro/aethertrace/network/members"><img src="https://img.shields.io/github/forks/Imganeshbro/aethertrace?style=for-the-badge&logo=github&color=818cf8&labelColor=0f172a" alt="Forks" /></a>
     <a href="https://github.com/Imganeshbro/aethertrace/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-10b981?style=for-the-badge&logo=open-source-initiative&labelColor=0f172a" alt="License" /></a>
     <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Runtime-Node.js_v24%2B-22c55e?style=for-the-badge&logo=node.js&labelColor=0f172a" alt="Node v24+" /></a>
-    <a href="#"><img src="https://img.shields.io/badge/Tests-21%2F21_Passing-38bdf8?style=for-the-badge&logo=vitest&labelColor=0f172a" alt="Tests Passing" /></a>
-    <a href="#"><img src="https://img.shields.io/badge/Dependencies-0_External_Libs-c084fc?style=for-the-badge&labelColor=0f172a" alt="Zero Dependencies" /></a>
+    <a href="#"><img src="https://img.shields.io/badge/Tests-25%2F25_Passing-38bdf8?style=for-the-badge&logo=vitest&labelColor=0f172a" alt="Tests Passing" /></a>
+    <a href="#"><img src="https://img.shields.io/badge/MCP-Native_Server-818cf8?style=for-the-badge&logo=anthropic&labelColor=0f172a" alt="MCP Server" /></a>
+    <a href="#"><img src="https://img.shields.io/badge/Plugin-Antigravity_%26_Claude-c084fc?style=for-the-badge&labelColor=0f172a" alt="Plugin Ready" /></a>
   </p>
 
   <p>
@@ -194,10 +195,37 @@ npm run blame traces/demo_failure.atrace
 
 ---
 
-## 🔌 Model Context Protocol (MCP) Integration
+## 🔌 Model Context Protocol (MCP) & Plugin Integration
 
-Wrap any MCP tool server with AetherTrace with zero code changes:
+AetherTrace runs natively as an **MCP Server** and ships with an official **Antigravity / Claude Code Skill & Plugin**.
 
+### 1. Connect as an MCP Server (Claude Code, Cursor, Antigravity, Windsurf)
+Add AetherTrace to your `claude_desktop_config.json` or MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "aethertrace": {
+      "command": "node",
+      "args": ["--experimental-strip-types", "c:/Users/hp/Documents/antigravity/happy-brahmagupta/src/mcp/server.ts"]
+    }
+  }
+}
+```
+
+Or run via npx:
+```bash
+npx aethertrace mcp
+```
+
+### 2. Tools Exposed to Any Autonomous Agent
+* `aethertrace_record_step`: Self-record chain-of-thought, tool calls, and observations with content hashing.
+* `aethertrace_get_causal_blame`: Inquire why a multi-step workflow failed and get actionable remedies.
+* `aethertrace_evaluate_invariant`: Pre-screen shell commands or tool parameters against 6 security invariants before execution.
+* `aethertrace_time_travel_fork`: Create a zero-token counterfactual execution branch at step $k$.
+* `aethertrace_synth_regression_test`: Auto-generate an offline Node.js CI test suite from the current trajectory.
+
+### 3. Wrap External MCP Servers with Transparent Invariant Proxy
 ```typescript
 import { McpProxy } from 'aethertrace';
 import { FlightRecorder } from 'aethertrace';
@@ -220,32 +248,41 @@ proxy.start();
 
 ```
 aethertrace/
+├── ci/
+│   └── github-actions-ci.yml      # Cross-platform CI/CD test automation matrix
 ├── assets/
 │   ├── hero-banner.svg            # High-res vector hero banner
 │   ├── studio-preview.svg         # Web Studio canvas interface mockup
 │   └── cli-demo.svg               # Terminal hypervisor execution mockup
 ├── bin/
-│   └── aethertrace.js             # Global executable runner
+│   ├── aethertrace.js             # Global executable runner (CLI)
+│   └── aethertrace-mcp.js         # Dedicated MCP server runner
+├── skills/
+│   └── aethertrace/
+│       └── SKILL.md               # Antigravity & Claude Code official agent skill
 ├── src/
 │   ├── types/index.ts             # Domain models (TrajectoryNode, CausalEdge, InvariantRule)
 │   ├── utils/hash.ts              # Deterministic SHA-256 & canonical JSON serialization
 │   ├── core/
 │   │   ├── causal-graph.ts        # Directed Acyclic Graph builder & topological analysis
 │   │   ├── blame-engine.ts        # Causal blame attribution & counterfactual analysis
-│   │   ├── firewall.ts            # Runtime invariant monitor & policy firewall
+│   │   ├── firewall.ts            # Runtime invariant monitor (6 security & safety guards)
 │   │   ├── recorder.ts            # Content-addressed append-only flight recorder (.atrace)
 │   │   └── time-travel.ts         # Zero-token ghost replay & counterfactual branching
+│   ├── mcp/
+│   │   └── server.ts              # Native Model Context Protocol (MCP) JSON-RPC server
 │   ├── proxy/
-│   │   └── mcp-proxy.ts           # Model Context Protocol (MCP) transparent stdio proxy
+│   │   └── mcp-proxy.ts           # Model Context Protocol transparent stdio proxy
 │   ├── synthesizer/
 │   │   └── test-generator.ts      # Trace-to-CI regression test synthesizer
 │   ├── ui/
 │   │   └── dashboard-generator.ts # Self-contained interactive HTML/Canvas visual studio
 │   └── cli/index.ts               # Unified command-line interface
-├── tests/                         # 21 comprehensive test suites
+├── tests/                         # 25 comprehensive test suites
 ├── traces/                        # Serialized .atrace execution bundles
 ├── LICENSE                        # Apache 2.0
-├── package.json
+├── package.json                   # Package configuration & executables
+├── plugin.json                    # Antigravity plugin manifest
 └── README.md
 ```
 

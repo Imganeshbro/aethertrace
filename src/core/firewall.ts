@@ -234,6 +234,108 @@ export class AgentFirewall {
         };
       }
     });
+
+    // Rule 5: Secret & Credential Leak Guard
+    this.registerRule({
+      id: 'secret-leak-guard',
+      name: 'Secret & Credential Leak Guard',
+      description: 'Prevents leakage of API keys, bearer tokens, and private credentials in tool payloads',
+      severity: 'BLOCKING',
+      evaluate: (node: TrajectoryNode) => {
+        const payloadStr = typeof node.content === 'string'
+          ? node.content
+          : JSON.stringify(node.content || '');
+
+        const secretPatterns = [
+          /\bsk-[a-zA-Z0-9]{20,}\b/,                 // OpenAI key pattern
+          /\bsk-ant-[a-zA-Z0-9_\-]{20,}\b/,          // Anthropic key pattern
+          /\bghp_[a-zA-Z0-9]{36}\b/,                 // GitHub Personal Access Token
+          /\bgho_[a-zA-Z0-9]{36}\b/,                 // GitHub OAuth Token
+          /\bAKIA[0-9A-Z]{16}\b/,                    // AWS Access Key ID
+          /-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY/  // Private Key Headers
+        ];
+
+        for (const pattern of secretPatterns) {
+          if (pattern.test(payloadStr)) {
+            return {
+              ruleId: 'secret-leak-guard',
+              ruleName: 'Secret & Credential Leak Guard',
+              passed: false,
+              severity: 'BLOCKING',
+              message: 'Potential plaintext credential/API key leakage detected in payload',
+              targetNodeId: node.id,
+              timestamp: new Date().toISOString()
+            };
+          }
+        }
+
+        return {
+          ruleId: 'secret-leak-guard',
+          ruleName: 'Secret & Credential Leak Guard',
+          passed: true,
+          severity: 'BLOCKING',
+          message: 'No credential leakage detected',
+          targetNodeId: node.id,
+          timestamp: new Date().toISOString()
+        };
+      }
+    });
+
+    // Rule 6: SQL Injection & Mutation Guard
+    this.registerRule({
+      id: 'sql-injection-guard',
+      name: 'SQL Injection Guard',
+      description: 'Detects unsanitized SQL concatenation or unauthorized schema drop attempts',
+      severity: 'BLOCKING',
+      evaluate: (node: TrajectoryNode) => {
+        if (node.type !== 'TOOL_CALL' && node.type !== 'ENVIRONMENT_MUTATION') {
+          return {
+            ruleId: 'sql-injection-guard',
+            ruleName: 'SQL Injection Guard',
+            passed: true,
+            severity: 'BLOCKING',
+            message: 'Not a data mutation or tool call',
+            targetNodeId: node.id,
+            timestamp: new Date().toISOString()
+          };
+        }
+
+        const payloadStr = typeof node.content === 'string'
+          ? node.content
+          : JSON.stringify(node.content || '');
+
+        const sqlPatterns = [
+          /'\s+OR\s+'?1'?\s*=\s*'?1/i,
+          /UNION\s+ALL\s+SELECT/i,
+          /;\s*DROP\s+TABLE/i,
+          /;\s*TRUNCATE\s+TABLE/i
+        ];
+
+        for (const pattern of sqlPatterns) {
+          if (pattern.test(payloadStr)) {
+            return {
+              ruleId: 'sql-injection-guard',
+              ruleName: 'SQL Injection Guard',
+              passed: false,
+              severity: 'BLOCKING',
+              message: `Potential SQL injection/destruction signature detected: ${pattern.source}`,
+              targetNodeId: node.id,
+              timestamp: new Date().toISOString()
+            };
+          }
+        }
+
+        return {
+          ruleId: 'sql-injection-guard',
+          ruleName: 'SQL Injection Guard',
+          passed: true,
+          severity: 'BLOCKING',
+          message: 'SQL safety analysis passed',
+          targetNodeId: node.id,
+          timestamp: new Date().toISOString()
+        };
+      }
+    });
   }
 
   /**
