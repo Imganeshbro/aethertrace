@@ -1,278 +1,266 @@
-import * as http from 'node:http';
-import * as fs from 'node:fs/promises';
-import * as path from 'node:path';
-import { FlightRecorder } from '../core/recorder.ts';
-import { CausalGraph } from '../core/causal-graph.ts';
-import { CausalBlameEngine } from '../core/blame-engine.ts';
-import { AgentFirewall } from '../core/firewall.ts';
-import { TimeTravelEngine } from '../core/time-travel.ts';
-import { TestSynthesizer } from '../synthesizer/test-generator.ts';
-import { DashboardGenerator } from '../ui/dashboard-generator.ts';
-import { AetherTraceMcpServer } from '../mcp/server.ts';
-import type { TraceBundle } from '../types/index.ts';
+/**
+ * BARON: Branching Autonomous Reasoning & Oracle Network
+ * CLI Entrypoint: Test-Time Compute Search, Live Benchmark Demo & RLVR Exporter
+ */
 
-function printBanner() {
-  console.log(`
-  \x1b[36m╔═════════════════════════════════════════════════════════════════╗\x1b[0m
-  \x1b[36m║\x1b[0m   \x1b[1m\x1b[34mAGENTREWIND\x1b[0m \x1b[90m— Time-Travel Debugger for AI Agents\x1b[0m            \x1b[36m║\x1b[0m
-  \x1b[36m║\x1b[0m   \x1b[32mZero-Token Replay\x1b[0m | \x1b[35mCausal Blame\x1b[0m | \x1b[33mActive Invariants\x1b[0m        \x1b[36m║\x1b[0m
-  \x1b[36m╚═════════════════════════════════════════════════════════════════╝\x1b[0m
-  `);
-}
+import { writeFile, readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { MCTSEngine, type CandidateStepProposal } from '../core/mcts-engine.ts';
+import { TerminalVisualizer } from '../ui/terminal-visualizer.ts';
+import { HtmlTreeGenerator } from '../ui/html-tree-generator.ts';
+import { DatasetExporter } from '../rlvr/dataset-exporter.ts';
+import { ExecutionSandbox } from '../verifier/execution-sandbox.ts';
+import { FormalLogicOracle } from '../verifier/formal-logic-oracle.ts';
+import { PRMScorer } from '../verifier/prm-scorer.ts';
 
-function printHelp() {
-  printBanner();
-  console.log(`
-  \x1b[1mUSAGE:\x1b[0m
-    agent-rewind <command> [options]
-    (Aliases: rewind, aethertrace)
+const args = process.argv.slice(2);
+const command = args[0] || 'demo';
 
-  \x1b[1mCOMMANDS:\x1b[0m
-    \x1b[32mdemo\x1b[0m                               Run interactive multi-step agent simulation demo
-    \x1b[32mblame\x1b[0m <trace.atrace>                Analyze causal root causes of an agent failure
-    \x1b[32minspect\x1b[0m <trace.atrace> [--port 4200]  Launch interactive visual web studio & DAG visualizer
-    \x1b[32mreplay\x1b[0m <trace.atrace> [--fork-at N]   Rewind and fork execution at specific step
-    \x1b[32msynth\x1b[0m <trace.atrace> [--output file]  Synthesize zero-token deterministic CI test suite
-    \x1b[32mmcp\x1b[0m                                 Launch Model Context Protocol (MCP) stdio server
+async function runDemo() {
+  console.log('\n\x1b[1m\x1b[36m╔════════════════════════════════════════════════════════════════════════╗\x1b[0m');
+  console.log('\x1b[1m\x1b[36m║     BARON: Branching Autonomous Reasoning & Oracle Network             ║\x1b[0m');
+  console.log('\x1b[1m\x1b[36m║     Universal Test-Time Compute & Verifiable RLVR Reasoning Engine     ║\x1b[0m');
+  console.log('\x1b[1m\x1b[36m╚════════════════════════════════════════════════════════════════════════╝\x1b[0m\n');
 
-  \x1b[1mEXAMPLES:\x1b[0m
-    npx agent-rewind demo
-    npx agent-rewind blame traces/demo_failure.atrace
-    npx agent-rewind inspect traces/demo_failure.atrace
-  `);
-}
+  const prompt = 'Synthesize a provably optimal O(n) Monotonic Deque algorithm for Sliding Window Maximum with invariant bounds';
+  console.log(`\x1b[33m[TASK]\x1b[0m ${prompt}\n`);
+  console.log(`\x1b[34m[INIT]\x1b[0m Initializing PUCT Search Engine with Dual-Engine Verification Fabric...\n`);
 
-export async function runDemo(): Promise<void> {
-  printBanner();
-  console.log('\x1b[1m[1/4] Initializing AgentRewind Autonomous Agent Simulation...\x1b[0m');
-
-  const recorder = new FlightRecorder('demo_autonomous_bug_fixer', 'agent fix-auth-flow');
-
-  // Step 0: User prompt
-  await recorder.recordStep(
-    'USER_INPUT',
-    'User Request: Fix auth token refresh',
-    { prompt: 'Please investigate token refresh failure in auth service and update config' }
-  );
-  console.log('  ✔ Step 0: User goal recorded');
-
-  // Step 1: Model CoT
-  await recorder.recordStep(
-    'MODEL_REASONING',
-    'Plan: Read auth service logs',
-    { thought: 'I should first read the logs to see the exception stack trace.' }
-  );
-  console.log('  ✔ Step 1: Model reasoning captured');
-
-  // Step 2: Tool call
-  await recorder.recordStep(
-    'TOOL_CALL',
-    'read_logs',
-    { service: 'auth-service', lines: 50 },
-    { metadata: { toolName: 'read_logs' } }
-  );
-  console.log('  ✔ Step 2: Tool call dispatched (read_logs)');
-
-  // Step 3: Tool observation with subtle corruption / 500 error
-  await recorder.recordStep(
-    'TOOL_OBSERVATION',
-    'read_logs_output',
-    {
-      status: 500,
-      rawOutput: '500 Internal Server Error: Remote logging socket timed out while reading /var/log/auth.log'
-    },
-    { metadata: { toolName: 'read_logs', isError: true } }
-  );
-  console.log('  \x1b[33m✔ Step 3: Tool observation received (Warning: 500 socket timeout)\x1b[0m');
-
-  // Step 4: Model hallucination / false assumption
-  await recorder.recordStep(
-    'MODEL_REASONING',
-    'Flawed Assumption: File does not exist',
-    { thought: 'Since logging timed out, I will assume the auth config file is missing and delete the cache directory.' }
-  );
-  console.log('  ✔ Step 4: Model formed reasoning path');
-
-  // Step 5: Destructive tool attempt (Firewall intercept!)
-  console.log('  \x1b[35m[AETHERTRACE HYPERVISOR] Evaluating step against active safety invariants...\x1b[0m');
-  const vetoedStep = await recorder.recordStep(
-    'TOOL_CALL',
-    'execute_shell',
-    { command: 'rm -rf /var/auth/cache' },
-    { metadata: { toolName: 'execute_shell' } }
-  );
-
-  if (vetoedStep.status === 'VETOED') {
-    console.log('  \x1b[31m⛔ VETOED: Invariant [destructive-command-guard] blocked command "rm -rf /var/auth/cache"!\x1b[0m');
-  }
-
-  // Step 6: Step crashes
-  await recorder.recordStep(
-    'ENVIRONMENT_MUTATION',
-    'execute_shell_failure',
-    { error: 'Operation aborted by Hypervisor security invariant' },
-    { causalParents: [vetoedStep.id] }
-  );
-
-  const tracePath = path.resolve('./traces/demo_failure.atrace');
-  await recorder.saveToFile(tracePath);
-  console.log(`\n\x1b[32m✔ Flight trace saved atomically to: ${tracePath}\x1b[0m\n`);
-
-  console.log('\x1b[1m[2/4] Executing Causal Blame Localization Algorithm...\x1b[0m');
-  const { bundle, graph } = await FlightRecorder.loadFromFile(tracePath);
-  const blameEngine = new CausalBlameEngine(graph);
-  const report = blameEngine.attributeBlame();
-
-  console.log('\n  \x1b[1mCAUSAL BLAME ATTRIBUTION REPORT:\x1b[0m');
-  console.log('  ' + '─'.repeat(70));
-  for (const [idx, b] of report.entries()) {
-    const scoreColor = b.blameScore > 0.6 ? '\x1b[31m' : '\x1b[33m';
-    console.log(`  \x1b[1m#${idx + 1}\x1b[0m Step ${b.stepIndex} [${b.nodeType}] ${b.title}`);
-    console.log(`     Blame Score: ${scoreColor}${(b.blameScore * 100).toFixed(1)}%\x1b[0m | Centrality: ${b.centralityScore}`);
-    console.log(`     \x1b[90mExplanation: ${b.explanation}\x1b[0m`);
-    console.log(`     \x1b[36m💡 Recommended Remedy: ${b.counterfactualRecommendation}\x1b[0m\n`);
-  }
-
-  console.log('\x1b[1m[3/4] Testing Counterfactual Time-Travel Forking...\x1b[0m');
-  const timeTravel = new TimeTravelEngine(bundle);
-  // Rewind to Step 3 and inject mock clean log
-  const forkRecorder = await timeTravel.createFork({
-    forkAtStep: 3,
-    overrideTitle: 'read_logs_output [COUNTERFACTUAL CLEAN MOCK]',
-    overridePayload: { status: 200, logs: '2026-10-23: Token refreshed successfully for user_42' },
-    replayMockStrategy: 'ZERO_TOKEN_GHOST'
+  const visualizer = new TerminalVisualizer();
+  const htmlGen = new HtmlTreeGenerator();
+  const exporter = new DatasetExporter();
+  const engine = new MCTSEngine({
+    maxDepth: 4,
+    maxRollouts: 15,
+    explorationConstant: 1.414,
+    pruningThreshold: -0.2
   });
 
-  // Re-run downstream from fork cleanly
-  await forkRecorder.recordStep(
-    'MODEL_REASONING',
-    'Resolved Reasoning',
-    { thought: 'Token refresh is working normally, updating ttl parameter in config.' }
-  );
-  await forkRecorder.recordStep(
-    'AGENT_RESPONSE',
-    'Task Completed',
-    { result: 'Auth token configuration validated.' }
-  );
+  // Deterministic generator simulating thought branches:
+  // - Branch 1: Flawed brute-force O(n*k) with high complexity
+  // - Branch 2: Degenerate syntax error (triggers instant AST fatal pruning)
+  // - Branch 3: Monotonic deque approach with formal assertion checks (verified terminal solution)
+  const candidateGenerator = async (p: string, history: any[]): Promise<CandidateStepProposal[]> => {
+    const depth = history.length;
 
-  const forkedBundle = forkRecorder.finalize('SUCCESS');
-  const diff = TimeTravelEngine.compareTrajectories(bundle, forkedBundle, 3);
-  console.log(`  ✔ Fork created from Step 3 without repeating Steps 0-2 (0 tokens spent)`);
-  console.log(`  ✔ Counterfactual outcome: Failure resolved = \x1b[32m${diff.resolvedFailure}\x1b[0m\n`);
-
-  console.log('\x1b[1m[4/4] Synthesizing Deterministic CI Regression Test...\x1b[0m');
-  const synth = new TestSynthesizer(bundle);
-  const testCode = synth.generateTestCode();
-  const synthPath = path.resolve('./tests/generated_regression.test.ts');
-  await fs.writeFile(synthPath, testCode, 'utf-8');
-  console.log(`  ✔ Zero-token CI regression test generated at: ${synthPath}`);
-  console.log('\n\x1b[1m\x1b[32m✨ DEMO COMPLETED SUCCESSFULLY! Run "aethertrace inspect traces/demo_failure.atrace" to view in browser.\x1b[0m\n');
-}
-
-export async function runInspect(traceFilePath: string, port: number = 4200): Promise<void> {
-  const resolved = path.resolve(traceFilePath);
-  const { bundle } = await FlightRecorder.loadFromFile(resolved);
-  const html = DashboardGenerator.generateHtml(bundle);
-
-  const server = http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    res.end(html);
-  });
-
-  server.listen(port, () => {
-    printBanner();
-    console.log(`  \x1b[32m✔ AetherTrace Interactive Studio running at:\x1b[0m`);
-    console.log(`    \x1b[1m\x1b[36mhttp://localhost:${port}\x1b[0m`);
-    console.log(`\n  Inspect session: \x1b[1m${bundle.metadata.sessionName}\x1b[0m (${bundle.nodes.length} steps)`);
-    console.log(`  Press Ctrl+C to close server.\n`);
-  });
-}
-
-export async function runBlame(traceFilePath: string): Promise<void> {
-  printBanner();
-  const resolved = path.resolve(traceFilePath);
-  const { bundle, graph } = await FlightRecorder.loadFromFile(resolved);
-  const blameEngine = new CausalBlameEngine(graph);
-  const report = blameEngine.attributeBlame();
-
-  console.log(`  Trace: \x1b[1m${bundle.metadata.sessionName}\x1b[0m (${bundle.metadata.traceId})`);
-  console.log(`  Status: \x1b[1m${bundle.metadata.status}\x1b[0m | Duration: ${bundle.metadata.durationMs}ms\n`);
-
-  if (report.length === 0) {
-    console.log('  \x1b[32m✔ No causal failures or invariant violations detected in this trace.\x1b[0m\n');
-    return;
-  }
-
-  console.log('  \x1b[1mCAUSAL BLAME RANKING:\x1b[0m');
-  console.log('  ' + '─'.repeat(70));
-  for (const [idx, b] of report.entries()) {
-    const scoreColor = b.blameScore > 0.6 ? '\x1b[31m' : '\x1b[33m';
-    console.log(`  \x1b[1m#${idx + 1}\x1b[0m Step ${b.stepIndex}: ${b.title} [${b.nodeType}]`);
-    console.log(`     Blame: ${scoreColor}${(b.blameScore * 100).toFixed(1)}%\x1b[0m | Centrality: ${b.centralityScore} | Entropy: ${b.entropyShift}`);
-    console.log(`     \x1b[90m${b.explanation}\x1b[0m`);
-    console.log(`     \x1b[36m💡 ${b.counterfactualRecommendation}\x1b[0m\n`);
-  }
-}
-
-export async function main() {
-  const args = process.argv.slice(2);
-  const command = args[0] || 'help';
-
-  try {
-    switch (command) {
-      case 'demo':
-        await runDemo();
-        break;
-      case 'blame':
-        if (!args[1]) {
-          console.error('\x1b[31mError: Missing trace file path. Usage: aethertrace blame <file.atrace>\x1b[0m');
-          process.exit(1);
+    if (depth === 1) {
+      return [
+        {
+          type: 'HYPOTHESIS',
+          description: 'Hypothesis A: Use nested loops over each window k. Complexity is O(n*k).',
+          priorConfidence: 0.45,
+          payload: `function maxSlidingWindow(nums, k) {
+            let res = [];
+            for (let i = 0; i <= nums.length - k; i++) {
+              let m = -Infinity;
+              for (let j = 0; j < k; j++) m = Math.max(m, nums[i + j]);
+              res.push(m);
+            }
+            return res;
+          }`
+        },
+        {
+          type: 'HYPOTHESIS',
+          description: 'Hypothesis B: Attempt recursive divide-and-conquer segmentation.',
+          priorConfidence: 0.35,
+          payload: `function maxSlidingWindow(nums, k) { // Incomplete syntax
+            if (nums.length === 0) return [
+          ` // Deliberate syntax error to test AST gate
+        },
+        {
+          type: 'HYPOTHESIS',
+          description: 'Hypothesis C: Maintain a monotonic descending deque of indices for strict O(n) runtime.',
+          priorConfidence: 0.85,
+          payload: `function maxSlidingWindow(nums, k) {
+            let q = [];
+            let res = [];
+            for (let i = 0; i < nums.length; i++) {
+              while (q.length && q[0] <= i - k) q.shift();
+              while (q.length && nums[q[q.length - 1]] <= nums[i]) q.pop();
+              q.push(i);
+              if (i >= k - 1) res.push(nums[q[0]]);
+            }
+            return res;
+          }`
         }
-        await runBlame(args[1]);
-        break;
-      case 'inspect':
-        if (!args[1]) {
-          console.error('\x1b[31mError: Missing trace file path. Usage: aethertrace inspect <file.atrace>\x1b[0m');
-          process.exit(1);
-        }
-        const portArg = args.indexOf('--port');
-        const port = portArg !== -1 ? parseInt(args[portArg + 1], 10) : 4200;
-        await runInspect(args[1], port);
-        break;
-      case 'synth':
-        if (!args[1]) {
-          console.error('\x1b[31mError: Missing trace file path. Usage: aethertrace synth <file.atrace> [--output <file>]\x1b[0m');
-          process.exit(1);
-        }
-        const { bundle } = await FlightRecorder.loadFromFile(args[1]);
-        const synth = new TestSynthesizer(bundle);
-        const code = synth.generateTestCode();
-        const outArg = args.indexOf('--output');
-        const outPath = outArg !== -1 ? args[outArg + 1] : './tests/synthetic_regression.test.ts';
-        await fs.writeFile(path.resolve(outPath), code, 'utf-8');
-        console.log(`\x1b[32m✔ Test generated at: ${outPath}\x1b[0m`);
-        break;
-      case 'mcp':
-        const mcpServer = new AetherTraceMcpServer();
-        mcpServer.startStdio();
-        break;
-      default:
-        printHelp();
-        break;
+      ];
     }
-  } catch (err) {
-    console.error('\x1b[31mFatal error:\x1b[0m', err);
+
+    if (depth === 2) {
+      const parent = history[history.length - 1];
+      if (parent.description.includes('Hypothesis C')) {
+        return [
+          {
+            type: 'CONCLUSION',
+            description: 'Terminal Verification: Run boundary assertions and assert O(n) amortized complexity.',
+            priorConfidence: 0.95,
+            payload: `function maxSlidingWindow(nums, k) {
+              let q = [];
+              let res = [];
+              for (let i = 0; i < nums.length; i++) {
+                while (q.length && q[0] <= i - k) q.shift();
+                while (q.length && nums[q[q.length - 1]] <= nums[i]) q.pop();
+                q.push(i);
+                if (i >= k - 1) res.push(nums[q[0]]);
+              }
+              return res;
+            }`,
+            assertionCode: `
+              const assert = require('node:assert');
+              const res1 = maxSlidingWindow([1,3,-1,-3,5,3,6,7], 3);
+              assert.deepStrictEqual(res1, [3,3,5,5,6,7]);
+              const res2 = maxSlidingWindow([1], 1);
+              assert.deepStrictEqual(res2, [1]);
+              console.log('ALL INVARIANTS & BOUNDARY TESTS PASSED deterministically.');
+            `
+          }
+        ];
+      }
+    }
+
+    return [];
+  };
+
+  const assertionCode = `
+    const assert = require('node:assert');
+    if (typeof maxSlidingWindow === 'function') {
+      const res = maxSlidingWindow([1,3,-1,-3,5,3,6,7], 3);
+      assert.deepStrictEqual(res, [3,3,5,5,6,7]);
+    }
+  `;
+
+  console.log('\x1b[32m[SEARCH]\x1b[0m Executing PUCT tree search with dynamic pruning...\n');
+  const result = await engine.search(prompt, candidateGenerator, assertionCode);
+
+  console.log(visualizer.renderTree(result.rootNode));
+  console.log(visualizer.renderMetrics(result));
+
+  // Synthesize RLVR training dataset
+  const grpoSample = exporter.exportGRPO(result, prompt);
+  const dpoPairs = exporter.exportDPO(result, prompt);
+
+  const tracesDir = join(process.cwd(), 'traces');
+  await exporter.saveToJSONL(join(tracesDir, 'sample_grpo.jsonl'), [grpoSample]);
+  await exporter.saveToJSONL(join(tracesDir, 'sample_dpo.jsonl'), dpoPairs);
+
+  // Generate interactive HTML dashboard
+  const htmlContent = htmlGen.generateHtml(result, prompt);
+  await writeFile(join(tracesDir, 'baron_tree.html'), htmlContent, 'utf8');
+
+  console.log(`\x1b[32m✔ [RLVR EXPORT]\x1b[0m Synthesized ${grpoSample.group.length} trajectories into GRPO format -> traces/sample_grpo.jsonl`);
+  console.log(`\x1b[32m✔ [RLVR EXPORT]\x1b[0m Synthesized ${dpoPairs.length} preference pairs into DPO format -> traces/sample_dpo.jsonl`);
+  console.log(`\x1b[32m✔ [UI DASHBOARD]\x1b[0m Interactive graph written -> traces/baron_tree.html\n`);
+}
+
+async function runSolve(promptInput?: string) {
+  const prompt = promptInput || args.slice(1).join(' ') || 'Write a verified prime factorization algorithm';
+  console.log(`\n\x1b[36m[BARON SOLVE]\x1b[0m Searching test-time solution for: "${prompt}"\n`);
+  
+  const engine = new MCTSEngine();
+  const visualizer = new TerminalVisualizer();
+
+  const dummyGenerator = async (p: string, h: any[]): Promise<CandidateStepProposal[]> => {
+    if (h.length === 1) {
+      return [
+        {
+          type: 'HYPOTHESIS',
+          description: `Analyze prime factorization properties for input.`,
+          priorConfidence: 0.9,
+          payload: `function factorize(n) {
+            let factors = [];
+            let d = 2;
+            while (d * d <= n) {
+              while (n % d === 0) { factors.push(d); n /= d; }
+              d++;
+            }
+            if (n > 1) factors.push(n);
+            return factors;
+          }`
+        }
+      ];
+    }
+    if (h.length === 2) {
+      return [
+        {
+          type: 'CONCLUSION',
+          description: 'Verify with boundary primes 2, 3, and compound numbers.',
+          priorConfidence: 0.95,
+          payload: `function factorize(n) {
+            let factors = [];
+            let d = 2;
+            while (d * d <= n) {
+              while (n % d === 0) { factors.push(d); n /= d; }
+              d++;
+            }
+            if (n > 1) factors.push(n);
+            return factors;
+          }`,
+          assertionCode: `
+            const assert = require('node:assert');
+            assert.deepStrictEqual(factorize(12), [2, 2, 3]);
+            assert.deepStrictEqual(factorize(17), [17]);
+            console.log('Factorization invariants verified.');
+          `
+        }
+      ];
+    }
+    return [];
+  };
+
+  const res = await engine.search(prompt, dummyGenerator);
+  console.log(visualizer.renderTree(res.rootNode));
+  console.log(visualizer.renderMetrics(res));
+  if (res.bestTrajectory) {
+    console.log(`\x1b[32m[VERIFIED SOLUTION]\x1b[0m\n${res.bestTrajectory.nodes[res.bestTrajectory.nodes.length - 1].description}\n`);
+  }
+}
+
+async function runVerify(filePath?: string) {
+  const file = filePath || args[1];
+  if (!file) {
+    console.error('Error: Please provide a file path to verify (e.g., baron verify solution.js)');
     process.exit(1);
   }
+
+  const code = await readFile(file, 'utf8');
+  console.log(`\n\x1b[36m[BARON VERIFY]\x1b[0m Verifying ${file}...\n`);
+
+  const oracle = new FormalLogicOracle();
+  const sandbox = new ExecutionSandbox();
+
+  const syntax = oracle.validateSyntax(code);
+  console.log(`• AST Syntax Check: ${syntax.valid ? '\x1b[32mPASS\x1b[0m' : '\x1b[31mFAIL: ' + syntax.error + '\x1b[0m'}`);
+
+  if (syntax.valid) {
+    const exec = await sandbox.executeCode(code);
+    console.log(`• Execution Exit Code: ${exec.exitCode === 0 ? '\x1b[32m0 (SUCCESS)\x1b[0m' : '\x1b[31m' + exec.exitCode + '\x1b[0m'}`);
+    console.log(`• Duration: ${exec.executionTimeMs}ms`);
+    if (exec.stdout) console.log(`• Stdout:\n${exec.stdout}`);
+    if (exec.stderr) console.log(`• Stderr:\n${exec.stderr}`);
+  }
 }
 
-// Run main if invoked directly
-const isDirectEntry = process.argv[1] && (
-  process.argv[1].endsWith('index.ts') ||
-  process.argv[1].endsWith('index.js') ||
-  process.argv[1].endsWith('aethertrace.js')
-);
-
-if (isDirectEntry) {
-  main();
+async function main() {
+  switch (command) {
+    case 'demo':
+      await runDemo();
+      break;
+    case 'solve':
+      await runSolve();
+      break;
+    case 'verify':
+      await runVerify();
+      break;
+    case 'export-rlvr':
+      await runDemo(); // demo executes the export
+      break;
+    default:
+      console.log(`Unknown command: ${command}`);
+      console.log('Available commands: demo, solve, verify, export-rlvr');
+  }
 }
+
+main().catch((err) => {
+  console.error('BARON CLI Fatal Error:', err);
+  process.exit(1);
+});

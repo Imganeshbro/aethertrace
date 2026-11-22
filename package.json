@@ -1,37 +1,39 @@
 {
-  "name": "agent-rewind",
+  "name": "baron-tts",
   "version": "1.0.0",
-  "description": "Deterministic Time-Travel Debugger, Causal Flight Recorder, and Invariant Verification Engine for Autonomous AI Agents",
+  "description": "Branching Autonomous Reasoning & Oracle Network — Universal Test-Time Compute & Verifiable RLVR Hypervisor",
   "main": "src/index.ts",
   "type": "module",
   "bin": {
-    "agent-rewind": "./bin/agent-rewind.js",
-    "rewind": "./bin/agent-rewind.js",
-    "agent-rewind-mcp": "./bin/agent-rewind-mcp.js",
-    "aethertrace": "./bin/agent-rewind.js",
-    "aethertrace-mcp": "./bin/agent-rewind-mcp.js"
+    "baron": "./bin/baron.js",
+    "baron-mcp": "./bin/baron-mcp.js",
+    "agent-rewind": "./bin/agent-rewind.js"
   },
   "scripts": {
     "test": "node --experimental-strip-types --test tests/**/*.test.ts",
-    "start": "node --experimental-strip-types src/cli/index.ts",
+    "solve": "node --experimental-strip-types src/cli/index.ts solve",
     "demo": "node --experimental-strip-types src/cli/index.ts demo",
-    "inspect": "node --experimental-strip-types src/cli/index.ts inspect",
-    "blame": "node --experimental-strip-types src/cli/index.ts blame",
-    "replay": "node --experimental-strip-types src/cli/index.ts replay",
-    "mcp": "node --experimental-strip-types src/mcp/server.ts"
+    "verify": "node --experimental-strip-types src/cli/index.ts verify",
+    "export-rlvr": "node --experimental-strip-types src/cli/index.ts export-rlvr",
+    "mcp": "node --experimental-strip-types src/mcp/server.ts",
+    "start": "node --experimental-strip-types src/cli/index.ts demo"
   },
   "keywords": [
+    "test-time-compute",
+    "reasoning",
+    "mcts",
+    "rlvr",
+    "reinforcement-learning",
+    "grpo",
+    "dpo",
+    "process-reward-model",
+    "prm",
+    "formal-verification",
     "ai-agents",
-    "debugging",
-    "time-travel",
-    "rewind",
-    "causal-inference",
-    "mcp",
-    "model-context-protocol",
     "hypervisor",
-    "reliability",
-    "observability",
-    "firewall"
+    "deep-thinking",
+    "o3",
+    "deepseek-r1"
   ],
   "author": "Ganesh (Imganeshbro)",
   "license": "Apache-2.0"
