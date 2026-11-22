@@ -39,6 +39,12 @@ export interface SearchResult {
   prunedBranchesCount: number;
   durationMs: number;
   converged: boolean;
+  selfConsistencyConsensus?: {
+    consensusAnswer: string;
+    voteShare: number;
+    totalVotes: number;
+  };
+  entropyUncertaintyScore?: number;
 }
 
 export class MCTSEngine {
@@ -182,6 +188,9 @@ export class MCTSEngine {
       ? this.buildTrajectory(bestTerminalNode, prompt)
       : this.findHighestRewardTrajectory(allTrajectories);
 
+    const selfConsistencyConsensus = this.computeSelfConsistency(allTrajectories);
+    const entropyUncertaintyScore = this.computeSearchEntropy(root);
+
     return {
       bestTrajectory,
       rootNode: root,
@@ -191,8 +200,61 @@ export class MCTSEngine {
       tokensSavedByPruning: pruningMetrics.tokensSaved,
       prunedBranchesCount: pruningMetrics.prunedNodes,
       durationMs,
-      converged
+      converged,
+      selfConsistencyConsensus,
+      entropyUncertaintyScore
     };
+  }
+
+  /**
+   * Self-Consistency Majority Voting (SC-CoT): Aggregates terminal conclusions across rollouts
+   */
+  public computeSelfConsistency(trajectories: Trajectory[]): { consensusAnswer: string; voteShare: number; totalVotes: number } | undefined {
+    const terminalTrajs = trajectories.filter((t) => t.isTerminal && t.nodes.length > 0);
+    if (terminalTrajs.length === 0) return undefined;
+
+    const voteCounts = new Map<string, number>();
+    for (const t of terminalTrajs) {
+      const finalNode = t.nodes[t.nodes.length - 1];
+      const answer = finalNode.description.trim();
+      voteCounts.set(answer, (voteCounts.get(answer) ?? 0) + 1);
+    }
+
+    let consensusAnswer = '';
+    let maxVotes = 0;
+    for (const [ans, votes] of voteCounts.entries()) {
+      if (votes > maxVotes) {
+        maxVotes = votes;
+        consensusAnswer = ans;
+      }
+    }
+
+    return {
+      consensusAnswer,
+      voteShare: Number((maxVotes / terminalTrajs.length).toFixed(3)),
+      totalVotes: terminalTrajs.length
+    };
+  }
+
+  /**
+   * Shannon Entropy over Root Node child branch visits: H(s) = -sum p(a) log2 p(a)
+   */
+  public computeSearchEntropy(root: ThoughtNode): number {
+    const activeChildren = root.children.filter((c) => c.visitCount > 0);
+    if (activeChildren.length <= 1) return 0.0;
+
+    const totalVisits = activeChildren.reduce((sum, c) => sum + c.visitCount, 0);
+    if (totalVisits === 0) return 0.0;
+
+    let entropy = 0.0;
+    for (const child of activeChildren) {
+      const p = child.visitCount / totalVisits;
+      if (p > 0) {
+        entropy -= p * Math.log2(p);
+      }
+    }
+
+    return Number(entropy.toFixed(3));
   }
 
   /**

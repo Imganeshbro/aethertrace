@@ -12,5 +12,6 @@ export * from './verifier/formal-logic-oracle.ts';
 export * from './verifier/prm-scorer.ts';
 export * from './rlvr/trajectory-recorder.ts';
 export * from './rlvr/dataset-exporter.ts';
+export * from './providers/llm-provider.ts';
 export * from './ui/terminal-visualizer.ts';
 export * from './ui/html-tree-generator.ts';

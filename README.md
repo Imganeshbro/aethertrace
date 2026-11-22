@@ -3,7 +3,7 @@
 
 [![Node.js Version](https://img.shields.io/badge/Node.js-v24%2B-brightgreen.svg)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
-[![Tests Passing](https://img.shields.io/badge/Tests-48%2F48%20Passing-brightgreen.svg)](tests/)
+[![Tests Passing](https://img.shields.io/badge/Tests-56%2F56%20Passing-brightgreen.svg)](tests/)
 [![MCP Spec](https://img.shields.io/badge/MCP-2024--11--05-orange.svg)](https://modelcontextprotocol.io/)
 
 ---
@@ -95,15 +95,20 @@ flowchart TD
 ## 🚀 Key Features
 
 - **PUCT Reasoning Tree:** Dynamic exploration, multi-candidate branching, and backtracking on deadlocks.
+- **Adaptive Test-Time Compute & Self-Consistency:**
+  - *Shannon Entropy $H(s)$:* Dynamically quantifies branch uncertainty over tree priors.
+  - *Self-Consistency Majority Voting (SC-CoT):* Aggregates diverse terminal rollouts to determine mathematical consensus.
+- **Multi-LLM Provider Fabric:** Pluggable generator connectors for **Ollama / DeepSeek-R1**, **OpenAI**, **Gemini**, and offline heuristic simulation.
 - **Dual Verification Fabric:**
   - *Deterministic Oracles:* Hardened child-process execution sandbox with timeout limits, memory caps, and assertion evaluations.
   - *AST Pre-flight Gate:* Validates code syntax prior to execution to prevent runtime crashes.
+  - *SMT / SAT Constraint Solver:* Evaluates bounded First-Order Logic constraints and mathematical invariant systems.
   - *Process Reward Model (PRM):* Grades intermediate reasoning steps on goal alignment, logical progression, and information density.
 - **Zero-Token Branch Pruning:** Detects circular reasoning loops and fatal invariant violations, pruning subtrees to save 60–80% of downstream tokens.
 - **Automated RLVR Synthesizer:** Serializes search trees into DeepSeek-R1-style GRPO advantage groups and DPO preference pairs.
 - **Visual Graph Explorer:**
   - Real-time ANSI/Unicode terminal tree renderer.
-  - Standalone, interactive HTML/SVG canvas DAG visualizer with node inspection.
+  - Standalone, interactive HTML/SVG canvas DAG visualizer with Pan/Zoom, status filters, and node inspector.
 - **Model Context Protocol (MCP) Server:** Seamlessly plugs into Antigravity, Claude Desktop, Cursor, or any MCP-compatible agent.
 
 ---

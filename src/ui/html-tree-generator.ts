@@ -12,6 +12,10 @@ export class HtmlTreeGenerator {
    */
   generateHtml(result: SearchResult, prompt: string): string {
     const treeDataJson = JSON.stringify(this.serializeTree(result.rootNode));
+    const consensusText = result.selfConsistencyConsensus
+      ? `${(result.selfConsistencyConsensus.voteShare * 100).toFixed(0)}% (${result.selfConsistencyConsensus.totalVotes} votes)`
+      : 'N/A';
+    const entropyVal = result.entropyUncertaintyScore ?? 0.0;
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -33,7 +37,7 @@ export class HtmlTreeGenerator {
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; }
     body { background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
-    #sidebar { width: 380px; border-right: 1px solid var(--border); background: var(--card-bg); display: flex; flex-direction: column; }
+    #sidebar { width: 380px; border-right: 1px solid var(--border); background: var(--card-bg); display: flex; flex-direction: column; z-index: 10; }
     .header { padding: 16px; border-bottom: 1px solid var(--border); }
     .header h1 { font-size: 1.1rem; color: var(--accent); display: flex; align-items: center; gap: 8px; }
     .header p { font-size: 0.8rem; color: var(--text-dim); margin-top: 4px; }
@@ -41,17 +45,31 @@ export class HtmlTreeGenerator {
     .stat-card { background: var(--bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border); }
     .stat-val { font-size: 1.1rem; font-weight: bold; color: var(--accent); }
     .stat-label { font-size: 0.75rem; color: var(--text-dim); }
+    
+    .filter-bar { display: flex; gap: 6px; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--bg); }
+    .filter-btn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text-dim); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
+    .filter-btn.active, .filter-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    
     #node-details { padding: 16px; overflow-y: auto; flex: 1; }
     #node-details h3 { font-size: 0.95rem; margin-bottom: 10px; color: var(--text); }
     .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; }
     .badge-verified { background: rgba(63, 185, 80, 0.2); color: var(--green); border: 1px solid var(--green); }
     .badge-pruned { background: rgba(248, 81, 73, 0.2); color: var(--red); border: 1px solid var(--red); }
     .badge-terminal { background: rgba(210, 153, 34, 0.2); color: var(--yellow); border: 1px solid var(--yellow); }
-    pre { background: var(--bg); padding: 8px; border-radius: 6px; font-size: 0.8rem; overflow-x: auto; border: 1px solid var(--border); margin-top: 8px; }
-    #canvas-container { flex: 1; position: relative; overflow: auto; background: radial-gradient(#1c2128 1px, transparent 1px); background-size: 24px 24px; }
-    svg { min-width: 100%; min-height: 100%; }
-    .node-rect { cursor: pointer; transition: stroke 0.2s; }
+    pre { background: var(--bg); padding: 8px; border-radius: 6px; font-size: 0.8rem; overflow-x: auto; border: 1px solid var(--border); margin-top: 8px; position: relative; }
+    .copy-btn { position: absolute; right: 6px; top: 6px; background: var(--card-bg); border: 1px solid var(--border); color: var(--text-dim); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; }
+    .copy-btn:hover { color: var(--text); }
+    
+    #canvas-container { flex: 1; position: relative; overflow: hidden; background: radial-gradient(#1c2128 1px, transparent 1px); background-size: 24px 24px; cursor: grab; }
+    #canvas-container:active { cursor: grabbing; }
+    #tree-svg { width: 100%; height: 100%; transform-origin: 0 0; }
+    .node-rect { cursor: pointer; transition: stroke 0.2s, opacity 0.2s; }
     .node-rect:hover { stroke: #fff !important; stroke-width: 2px !important; }
+    .node-dimmed { opacity: 0.25; }
+    
+    .zoom-controls { position: absolute; right: 20px; top: 20px; display: flex; flex-direction: column; gap: 6px; z-index: 20; }
+    .zoom-btn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); width: 34px; height: 34px; border-radius: 6px; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .zoom-btn:hover { background: var(--accent); color: #fff; }
   </style>
 </head>
 <body>
@@ -70,38 +88,54 @@ export class HtmlTreeGenerator {
         <div class="stat-label">Tokens Saved</div>
       </div>
       <div class="stat-card">
-        <div class="stat-val">${result.durationMs}ms</div>
-        <div class="stat-label">Search Duration</div>
+        <div class="stat-val" style="color: var(--accent);">${consensusText}</div>
+        <div class="stat-label">Self-Consistency</div>
       </div>
       <div class="stat-card">
-        <div class="stat-val" style="color: var(--red);">${result.prunedBranchesCount}</div>
-        <div class="stat-label">Pruned Dead-Ends</div>
+        <div class="stat-val" style="color: var(--yellow);">${entropyVal}</div>
+        <div class="stat-label">Search Entropy H(s)</div>
       </div>
     </div>
+    
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterNodes('ALL')">All</button>
+      <button class="filter-btn" onclick="filterNodes('VERIFIED')">Verified</button>
+      <button class="filter-btn" onclick="filterNodes('PRUNED')">Pruned</button>
+      <button class="filter-btn" onclick="filterNodes('TERMINAL')">Terminal</button>
+    </div>
+
     <div id="node-details">
       <p style="color: var(--text-dim); font-size: 0.85rem;">Click any node in the tree to inspect its hypothesis, verification metrics, and code artifacts.</p>
     </div>
   </div>
+
   <div id="canvas-container">
-    <svg id="tree-svg"></svg>
+    <div class="zoom-controls">
+      <button class="zoom-btn" onclick="zoom(1.2)" title="Zoom In">+</button>
+      <button class="zoom-btn" onclick="zoom(0.8)" title="Zoom Out">−</button>
+      <button class="zoom-btn" onclick="resetZoom()" title="Reset">⟲</button>
+    </div>
+    <svg id="tree-svg">
+      <g id="viewport-group"></g>
+    </svg>
   </div>
 
   <script>
     const rootData = ${treeDataJson};
     const nodeDetails = document.getElementById('node-details');
     const svg = document.getElementById('tree-svg');
+    const viewportGroup = document.getElementById('viewport-group');
+    const canvasContainer = document.getElementById('canvas-container');
 
-    // Layout tree with simple layered positioning
-    let nodeIdCounter = 0;
     const nodeMap = new Map();
 
-    function assignPositions(node, depth = 0, yOffset = { val: 40 }) {
-      node.x = 80 + depth * 260;
+    function assignPositions(node, depth = 0, yOffset = { val: 60 }) {
+      node.x = 80 + depth * 280;
       node.y = yOffset.val;
       nodeMap.set(node.id, node);
       
       if (!node.children || node.children.length === 0) {
-        yOffset.val += 90;
+        yOffset.val += 100;
       } else {
         node.children.forEach(child => assignPositions(child, depth + 1, yOffset));
         const childYs = node.children.map(c => c.y);
@@ -112,14 +146,14 @@ export class HtmlTreeGenerator {
     const yCounter = { val: 60 };
     assignPositions(rootData, 0, yCounter);
 
-    // Render tree SVG
-    let svgContent = '';
+    let linksContent = '';
+    let nodesContent = '';
 
     function renderLinks(node) {
       if (!node.children) return;
       node.children.forEach(child => {
         const strokeColor = child.status === 'PRUNED' ? '#f85149' : (child.status === 'VERIFIED' ? '#3fb950' : '#30363d');
-        svgContent += \`<path d="M \${node.x + 180} \${node.y + 25} C \${node.x + 220} \${node.y + 25}, \${child.x - 40} \${child.y + 25}, \${child.x} \${child.y + 25}" 
+        linksContent += \`<path id="link-\${child.id}" d="M \${node.x + 200} \${node.y + 25} C \${node.x + 240} \${node.y + 25}, \${child.x - 40} \${child.y + 25}, \${child.x} \${child.y + 25}" 
           fill="none" stroke="\${strokeColor}" stroke-width="2" stroke-dasharray="\${child.status === 'PRUNED' ? '4,4' : 'none'}" />\`;
         renderLinks(child);
       });
@@ -132,14 +166,14 @@ export class HtmlTreeGenerator {
       if (node.status === 'PRUNED') stroke = '#f85149';
       if (node.status === 'TERMINAL') stroke = '#d29922';
 
-      const shortText = (node.description || '').substring(0, 22) + '...';
+      const shortText = (node.description || '').substring(0, 24) + '...';
       const qText = 'N=' + node.visitCount + ' | Q=' + (node.meanValue ? node.meanValue.toFixed(2) : '0.00');
 
-      svgContent += \`
-        <g class="node-group" onclick="selectNode('\${node.id}')">
-          <rect class="node-rect" x="\${node.x}" y="\${node.y}" width="180" height="50" rx="8" fill="\${fill}" stroke="\${stroke}" stroke-width="1.5" />
-          <text x="\${node.x + 10}" y="\${node.y + 20}" fill="#c9d1d9" font-size="11" font-weight="bold">\${shortText}</text>
-          <text x="\${node.x + 10}" y="\${node.y + 38}" fill="#8b949e" font-size="10">\${qText}</text>
+      nodesContent += \`
+        <g id="group-\${node.id}" class="node-group" onclick="selectNode('\${node.id}')">
+          <rect id="rect-\${node.id}" class="node-rect" data-status="\${node.status}" x="\${node.x}" y="\${node.y}" width="200" height="52" rx="8" fill="\${fill}" stroke="\${stroke}" stroke-width="1.5" />
+          <text x="\${node.x + 12}" y="\${node.y + 22}" fill="#c9d1d9" font-size="11" font-weight="bold">\${shortText}</text>
+          <text x="\${node.x + 12}" y="\${node.y + 40}" fill="#8b949e" font-size="10">\${qText}</text>
         </g>
       \`;
 
@@ -148,9 +182,69 @@ export class HtmlTreeGenerator {
 
     renderLinks(rootData);
     renderNodes(rootData);
-    svg.innerHTML = svgContent;
-    svg.setAttribute('width', '2400');
-    svg.setAttribute('height', Math.max(800, yCounter.val + 100));
+    viewportGroup.innerHTML = linksContent + nodesContent;
+
+    // Pan & Zoom Implementation
+    let scale = 1.0;
+    let translateX = 20;
+    let translateY = 20;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    function updateTransform() {
+      viewportGroup.setAttribute('transform', \`translate(\${translateX}, \${translateY}) scale(\${scale})\`);
+    }
+    updateTransform();
+
+    canvasContainer.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.node-group')) return;
+      isDragging = true;
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      updateTransform();
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    canvasContainer.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+      scale = Math.min(3.0, Math.max(0.3, scale * zoomFactor));
+      updateTransform();
+    });
+
+    window.zoom = function(factor) {
+      scale = Math.min(3.0, Math.max(0.3, scale * factor));
+      updateTransform();
+    };
+
+    window.resetZoom = function() {
+      scale = 1.0;
+      translateX = 20;
+      translateY = 20;
+      updateTransform();
+    };
+
+    window.filterNodes = function(status) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.querySelectorAll('.node-rect').forEach(rect => {
+        const nodeStatus = rect.getAttribute('data-status');
+        if (status === 'ALL' || nodeStatus === status) {
+          rect.classList.remove('node-dimmed');
+        } else {
+          rect.classList.add('node-dimmed');
+        }
+      });
+    };
 
     window.selectNode = function(id) {
       const node = nodeMap.get(id);

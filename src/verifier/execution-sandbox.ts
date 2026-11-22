@@ -146,4 +146,78 @@ export class ExecutionSandbox {
       artifacts
     };
   }
+
+  /**
+   * Execute Python code in an isolated sub-process with safe fallback
+   */
+  async executePython(
+    code: string,
+    options: SandboxOptions = {}
+  ): Promise<ExecutionArtifacts> {
+    const timeout = options.timeoutMs ?? this.defaultTimeoutMs;
+    const startTime = performance.now();
+
+    return new Promise((resolve) => {
+      let stdout = '';
+      let stderr = '';
+      let timedOut = false;
+
+      let child;
+      try {
+        child = spawn('python', ['-c', code], { windowsHide: true });
+      } catch (err: any) {
+        return resolve({
+          code,
+          stdout: '',
+          stderr: `Python runtime unavailable: ${err?.message}`,
+          exitCode: 1,
+          executionTimeMs: 0,
+          error: 'Python binary not available in host environment'
+        });
+      }
+
+      const timer = setTimeout(() => {
+        timedOut = true;
+        try { child.kill('SIGKILL'); } catch {}
+      }, timeout);
+
+      child.stdout?.on('data', (c) => { stdout += c.toString(); });
+      child.stderr?.on('data', (c) => { stderr += c.toString(); });
+
+      child.on('close', (code) => {
+        clearTimeout(timer);
+        const duration = Math.round(performance.now() - startTime);
+        if (timedOut) {
+          return resolve({
+            code,
+            stdout,
+            stderr: stderr + `\n[SANDBOX_TIMEOUT]: Python execution exceeded deadline of ${timeout}ms.`,
+            exitCode: 124,
+            executionTimeMs: duration,
+            error: `Timeout after ${timeout}ms`
+          });
+        }
+        resolve({
+          code,
+          stdout: stdout.trim(),
+          stderr: stderr.trim(),
+          exitCode: code ?? 0,
+          executionTimeMs: duration,
+          error: code !== 0 ? (stderr.trim() || `Process exited with code ${code}`) : undefined
+        });
+      });
+
+      child.on('error', (err) => {
+        clearTimeout(timer);
+        resolve({
+          code,
+          stdout: '',
+          stderr: `Python invocation error: ${err.message}`,
+          exitCode: 1,
+          executionTimeMs: 0,
+          error: `Python execution failed: ${err.message}`
+        });
+      });
+    });
+  }
 }

@@ -104,4 +104,56 @@ export class FormalLogicOracle {
 
     return { contradictionDetected: false };
   }
+
+  /**
+   * Bounded SMT/SAT Constraint Solver: Solves First-Order Logic constraints over discrete domains
+   */
+  solveConstraintSystem(
+    variables: Record<string, { min: number; max: number; step?: number }>,
+    constraints: Array<{ name: string; predicate: (assignment: Record<string, number>) => boolean }>
+  ): { satisfiable: boolean; model?: Record<string, number>; violatedConstraint?: string } {
+    const varNames = Object.keys(variables);
+    if (varNames.length === 0) return { satisfiable: true, model: {} };
+
+    // Generate Cartesian product grid search over bounded domain
+    const candidateAssignment: Record<string, number> = {};
+
+    function* generateAssignments(index: number): Generator<Record<string, number>> {
+      if (index === varNames.length) {
+        yield { ...candidateAssignment };
+        return;
+      }
+
+      const varName = varNames[index];
+      const spec = variables[varName];
+      const step = spec.step ?? 1;
+
+      for (let val = spec.min; val <= spec.max; val += step) {
+        candidateAssignment[varName] = val;
+        yield* generateAssignments(index + 1);
+      }
+    }
+
+    for (const assignment of generateAssignments(0)) {
+      let allSatisfied = true;
+      for (const c of constraints) {
+        if (!c.predicate(assignment)) {
+          allSatisfied = false;
+          break;
+        }
+      }
+
+      if (allSatisfied) {
+        return {
+          satisfiable: true,
+          model: assignment
+        };
+      }
+    }
+
+    return {
+      satisfiable: false,
+      violatedConstraint: constraints[0]?.name ?? 'Unsatisfiable constraints'
+    };
+  }
 }
